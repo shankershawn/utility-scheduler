@@ -24,19 +24,19 @@ public class SeatAvailabilityRequestDto {
     private ClassCode classCode;
 
     public enum QuotaCode {
-        GN;
+        GN
     }
 
     @Getter
     public enum ClassCode {
-        _2S;
+        _2S, _CC, _EC, _1A, _2A, _3A, _3E, _SL;
 
-        public ClassCode getName() {
+        public String getName() {
             String name = name();
-            if(name.charAt(0) == '_') {
-                name = name.substring(1, name.length());
+            if (name.charAt(0) == '_') {
+                name = name.substring(1);
             }
-            return Enum.valueOf(ClassCode.class, name);
+            return name;
         }
 
 

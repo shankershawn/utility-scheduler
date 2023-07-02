@@ -10,19 +10,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-
 @Service
 @RequiredArgsConstructor
 public class IrctcServiceImpl implements IrctcService {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate irctcRestTemplate;
 
     @Override
     public SeatAvailabilityResponseDto fetchAvailabilityData(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
-        ResponseEntity<SeatAvailabilityResponseDto> responseEntity = restTemplate.exchange(RequestEntity
-                .post(URI.create("https://www.irctc.co.in/eticketing/protected/mapps1/avlFarenquiry/12891/20230619/KUR/PURI/2S/GN/N"))
-                .header("greq", "1686997853813")
+        String url = String
+                .format("/avlFarenquiry/%s/%s/%s/%s/%s/%s/N",
+                        seatAvailabilityRequestDto.getTrainNumber(),
+                        seatAvailabilityRequestDto.getJourneyDate(),
+                        seatAvailabilityRequestDto.getFromStnCode(),
+                        seatAvailabilityRequestDto.getToStnCode(),
+                        seatAvailabilityRequestDto.getClassCode().getName(),
+                        seatAvailabilityRequestDto.getQuotaCode().name());
+        ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate.exchange(RequestEntity
+                .post(url)
+                .header("greq", String.valueOf(System.currentTimeMillis()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(seatAvailabilityRequestDto), SeatAvailabilityResponseDto.class);
         return responseEntity.getBody();
