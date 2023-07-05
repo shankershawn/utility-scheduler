@@ -2,6 +2,12 @@ package com.shankarsan.utilityscheduler.constants;
 
 public class CommonConstants {
 
+    public static final String COMMA = ",";
+    public static final String TEMP_PATH = "/tmp/temp";
+    public static final String TILDE = "~";
+
+    public static final String SEAT_AVAILABILITY_CSV = "/seat_availability.csv";
+
     private CommonConstants() {
 
     }

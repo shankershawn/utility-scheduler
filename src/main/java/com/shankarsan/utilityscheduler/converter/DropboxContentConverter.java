@@ -1,5 +1,7 @@
 package com.shankarsan.utilityscheduler.converter;
 
+import com.shankarsan.utilityscheduler.constants.CommonConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -8,12 +10,15 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 @Component
-public class DropboxContentConverter implements HttpMessageConverter<InputStream> {
+@Slf4j
+public class DropboxContentConverter implements HttpMessageConverter<File> {
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {
         return true;
@@ -35,14 +40,22 @@ public class DropboxContentConverter implements HttpMessageConverter<InputStream
     }
 
     @Override
-    public InputStream read(Class<? extends InputStream> clazz, HttpInputMessage inputMessage)
+    public File read(Class<? extends File> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
-        return inputMessage.getBody();
+        int bytesRead;
+        byte[] byteArray = new byte[1024];
+        File tempFile = new File(CommonConstants.TEMP_PATH);
+        try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+            while ((bytesRead = inputMessage.getBody().read(byteArray)) != -1) {
+                outputStream.write(byteArray, 0, bytesRead);
+            }
+        }
+        return tempFile;
     }
 
     @Override
-    public void write(InputStream file, MediaType contentType, HttpOutputMessage outputMessage)
+    public void write(File file, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        //TODO No action needed
+        //TODO
     }
 }

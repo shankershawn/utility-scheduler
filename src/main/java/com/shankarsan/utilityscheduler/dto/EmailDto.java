@@ -1,15 +1,18 @@
 package com.shankarsan.utilityscheduler.dto;
 
 import lombok.Builder;
+import lombok.Data;
 
 @Builder
+@Data
 public class EmailDto {
 
     private String emailAddress;
 
-    private EmailAddressLevel emailAddressLevel;
+    @Builder.Default
+    private EmailAddressLevel emailAddressLevel = EmailAddressLevel.TO;
 
-    enum EmailAddressLevel {
-        TO,CC,BCC
+    public enum EmailAddressLevel {
+        TO, CC, BCC
     }
 }

@@ -1,8 +1,8 @@
 package com.shankarsan.utilityscheduler.service;
 
-import java.io.InputStream;
+import java.io.File;
 
 public interface DropboxService {
 
-    InputStream downloadFile(String path);
+    File downloadFile(String path);
 }

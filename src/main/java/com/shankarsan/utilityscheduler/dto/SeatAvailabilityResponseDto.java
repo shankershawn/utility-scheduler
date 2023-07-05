@@ -7,5 +7,7 @@ import java.util.List;
 @Data
 public class SeatAvailabilityResponseDto {
     private List<AvailabilityDayDto> avlDayList;
+    private List<EmailDto> emailDtoList;
     private String errorMessage;
+    private String mailSubject;
 }

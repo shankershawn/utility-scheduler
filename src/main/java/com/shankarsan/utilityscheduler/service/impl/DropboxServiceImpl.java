@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -29,8 +29,8 @@ public class DropboxServiceImpl implements DropboxService {
     private final ApplicationConfiguration applicationConfiguration;
 
     @Override
-    public final InputStream downloadFile(String path) {
-        ResponseEntity<InputStream> downloadResponseEntity;
+    public final File downloadFile(String path) {
+        ResponseEntity<File> downloadResponseEntity;
         String shortLivedToken = Optional.ofNullable(getRefreshToken())
                 .map(RefreshTokenDto::getAccessToken)
                 .orElse(null);
@@ -41,7 +41,7 @@ public class DropboxServiceImpl implements DropboxService {
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
         downloadResponseEntity = dropboxDownloadRestTemplate
                 .exchange("/2/files/download", HttpMethod.POST,
-                        httpEntity, InputStream.class, Collections.emptyMap());
+                        httpEntity, File.class, Collections.emptyMap());
         return downloadResponseEntity.getBody();
 
     }

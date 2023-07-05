@@ -1,0 +1,56 @@
+package com.shankarsan.utilityscheduler.service.comms.impl;
+
+import com.shankarsan.utilityscheduler.dto.EmailDto;
+import com.shankarsan.utilityscheduler.service.comms.MailService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class MailServiceImpl implements MailService {
+
+    private final MailSender mailSender;
+
+    private final List<String> subjectList = new ArrayList<>();
+
+    @Override
+    public void sendMail(List<EmailDto> recipients, String body, String subject, @Nullable List<File> attachments) {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        Map<EmailDto.EmailAddressLevel, List<EmailDto>> map = recipients.stream()
+                .collect(Collectors.groupingBy(EmailDto::getEmailAddressLevel));
+        simpleMailMessage.setTo(Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.TO))
+                .map(Collection::stream)
+                .map(e -> e.map(EmailDto::getEmailAddress)
+                        .toArray(String[]::new))
+                .orElse(null));
+        simpleMailMessage.setCc(Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.CC))
+                .map(Collection::stream)
+                .map(e -> e.map(EmailDto::getEmailAddress)
+                        .toArray(String[]::new))
+                .orElse(null));
+        simpleMailMessage.setBcc(Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.BCC))
+                .map(Collection::stream)
+                .map(e -> e.map(EmailDto::getEmailAddress)
+                        .toArray(String[]::new))
+                .orElse(null));
+        if (subjectList.contains(subject)) {
+            subject = "Re: " + subject;
+        } else {
+            subjectList.add(subject);
+        }
+        simpleMailMessage.setSubject(subject);
+        simpleMailMessage.setFrom("noreply@utility-scheduler.com");
+        simpleMailMessage.setReplyTo("noreply@utility-scheduler.com");
+        simpleMailMessage.setText(body);
+        mailSender.send(simpleMailMessage);
+    }
+}

@@ -35,6 +35,8 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'com.dropbox.core:dropbox-core-sdk:5.4.5'
 	implementation 'org.springframework.vault:spring-vault-core'
+	implementation 'com.google.code.gson:gson:2.10.1'
+
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

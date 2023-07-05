@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
 @Data
 @Builder
 public class SeatAvailabilityRequestDto {
@@ -22,6 +24,7 @@ public class SeatAvailabilityRequestDto {
     private final Boolean isLogedinReq = false;
     private String journeyDate; //YYYYMMDD format
     private ClassCode classCode;
+    private List<EmailDto> emailDtoList;
 
     public enum QuotaCode {
         GN
