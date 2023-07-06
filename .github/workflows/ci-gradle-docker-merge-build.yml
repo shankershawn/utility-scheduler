@@ -5,12 +5,10 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradld and Docker
+name: Java CI with Gradle and Docker - Merge Build
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
 permissions:
@@ -22,8 +20,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Log env vars
-      run: echo "VAULT_TOKEN ${{ secrets.VAULT_TOKEN }}"
     - name: Import Vault Secrets
       uses: hashicorp/vault-action@v2
       with:
