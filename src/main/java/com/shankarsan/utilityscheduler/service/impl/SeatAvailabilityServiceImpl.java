@@ -1,6 +1,7 @@
 package com.shankarsan.utilityscheduler.service.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
@@ -52,7 +53,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     }
 
     private void mailResponse(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         mailService.sendMail(seatAvailabilityResponseDto.getEmailDtoList(),
                 Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
                         .map(gson::toJson)
