@@ -32,7 +32,6 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: clean build
-    - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker build --build-arg JAR_FILE=build/libs/utility-scheduler-0.0.1-SNAPSHOT.jar -t shankershawn/utility-scheduler .
 
