@@ -29,7 +29,7 @@ jobs:
       with:
         url: http://144.24.128.195:8200
         token: ${{ secrets.VAULT_TOKEN }}
-        secrets: secret/utility-scheduler docker-hub-token | DOCKER_HUB_TOKEN
+        secrets: secret/data/utility-scheduler docker-hub-token | DOCKER_HUB_TOKEN
     - name: Docker Hub Login
       uses: docker/login-action@v2
       with:
