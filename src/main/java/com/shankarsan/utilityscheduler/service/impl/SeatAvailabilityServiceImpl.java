@@ -46,9 +46,9 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     private SeatAvailabilityResponseDto logSeatAvailability(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
                 .map(List::toString)
-                .ifPresent(dataList -> log.info("Data: {}", dataList));
+                .ifPresent(dataList -> log.debug("Data: {}", dataList));
         Optional.ofNullable(seatAvailabilityResponseDto.getErrorMessage())
-                .ifPresent(log::info);
+                .ifPresent(log::debug);
         return seatAvailabilityResponseDto;
     }
 

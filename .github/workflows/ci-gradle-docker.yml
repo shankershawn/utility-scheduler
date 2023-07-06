@@ -50,4 +50,6 @@ jobs:
         VERSION=$(date +%s)
         docker build --build-arg JAR_FILE=build/libs/utility-scheduler-0.0.1-SNAPSHOT.jar -t shankershawn/utility-scheduler:$VERSION .
         docker push shankershawn/utility-scheduler:$VERSION
+        docker tag shankershawn/utility-scheduler:$VERSION shankershawn/utility-scheduler:latest
+        docker push shankershawn/utility-scheduler:latest
 
