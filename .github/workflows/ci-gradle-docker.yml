@@ -22,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Log env vars
+      run: echo "VAULT_TOKEN ${{ secrets.VAULT_TOKEN }}"
     - name: Import Vault Secrets
       uses: hashicorp/vault-action@v2
       with:
