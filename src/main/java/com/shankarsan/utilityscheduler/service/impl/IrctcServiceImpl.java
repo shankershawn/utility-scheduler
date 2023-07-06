@@ -1,5 +1,6 @@
 package com.shankarsan.utilityscheduler.service.impl;
 
+import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
@@ -20,6 +21,8 @@ public class IrctcServiceImpl implements IrctcService {
 
     private final RestTemplate irctcRestTemplate;
 
+    private final ApplicationConfiguration applicationConfiguration;
+
     @Override
     public SeatAvailabilityResponseDto fetchAvailabilityData(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
         SeatAvailabilityResponseDto seatAvailabilityResponseDto;
@@ -35,7 +38,11 @@ public class IrctcServiceImpl implements IrctcService {
                         seatAvailabilityRequestDto.getQuotaCode().name());
         ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate.exchange(RequestEntity
                 .post(url)
-                .header("greq", String.valueOf(System.currentTimeMillis()))
+                .headers(httpHeaders -> {
+                    httpHeaders.set("greq", String.valueOf(System.currentTimeMillis()));
+                    applicationConfiguration.getHeaderMap()
+                            .forEach(httpHeaders::set);
+                })
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(seatAvailabilityRequestDto), SeatAvailabilityResponseDto.class);
         seatAvailabilityResponseDto = responseEntity.getBody();
