@@ -31,14 +31,14 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     private final MailService mailService;
 
     public void processSeatAvailability() {
-        File downloadedFile = dropboxService.downloadFile(CommonConstants.SEAT_AVAILABILITY_CSV);
         try {
+            File downloadedFile = dropboxService.downloadFile(CommonConstants.SEAT_AVAILABILITY_CSV);
             transformInputStream(new FileInputStream(downloadedFile))
                     .stream()
                     .map(irctcService::fetchAvailabilityData)
                     .map(this::logSeatAvailability)
                     .forEach(this::mailResponse);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             log.error("Exception encountere", e);
         }
     }
