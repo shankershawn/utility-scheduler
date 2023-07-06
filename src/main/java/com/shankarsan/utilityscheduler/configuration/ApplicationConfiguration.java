@@ -23,6 +23,8 @@ public class ApplicationConfiguration {
 
     private Map<String, String> urlMap;
 
+    private Map<String, String> headerMap;
+
     public String getCronExpression(Map<String, String> configMap) {
         return configMap.get(CommonConstants.CRON_EXPRESSION);
     }
