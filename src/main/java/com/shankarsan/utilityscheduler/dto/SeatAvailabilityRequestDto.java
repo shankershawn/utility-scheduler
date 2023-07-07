@@ -22,7 +22,7 @@ public class SeatAvailabilityRequestDto {
     private String fromStnCode;
     private String toStnCode;
     private final Boolean isLogedinReq = false;
-    private String journeyDate; //YYYYMMDD format
+    private String journeyDate; //DD-MM-YYYY format
     private ClassCode classCode;
     private List<EmailDto> emailDtoList;
 
