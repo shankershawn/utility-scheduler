@@ -53,12 +53,14 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     }
 
     private void mailResponse(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        mailService.sendMail(seatAvailabilityResponseDto.getEmailDtoList(),
-                Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
-                        .map(gson::toJson)
-                        .orElse(seatAvailabilityResponseDto.getErrorMessage()),
-                seatAvailabilityResponseDto.getMailSubject(), null);
+        Optional.ofNullable(seatAvailabilityResponseDto).map(SeatAvailabilityResponseDto::getEmailDtoList)
+                .ifPresent(list -> {
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    mailService.sendMail(list, Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
+                                    .map(gson::toJson)
+                                    .orElse(seatAvailabilityResponseDto.getErrorMessage()),
+                            seatAvailabilityResponseDto.getMailSubject(), null);
+                });
     }
 
     private List<SeatAvailabilityRequestDto> transformInputStream(InputStream inputStream) {
