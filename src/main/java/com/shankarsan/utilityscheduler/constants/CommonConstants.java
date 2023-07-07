@@ -2,17 +2,12 @@ package com.shankarsan.utilityscheduler.constants;
 
 public class CommonConstants {
 
-    public static final String COMMA = ",";
-    public static final String TEMP_PATH = "/tmp/temp";
-    public static final String TILDE = "~";
-
-    public static final String SEAT_AVAILABILITY_CSV = "/seat_availability.csv";
-
     private CommonConstants() {
 
     }
 
     public static final String CRON_EXPRESSION = "cron-expression";
+
     public static final String IRCTC = "irctc";
 
     public static final String DROPBOX_CLIENT_SECRET = "dropbox-client-secret";
@@ -24,4 +19,17 @@ public class CommonConstants {
     public static final String DROPBOX_API = "dropbox-api";
 
     public static final String DROPBOX_CONTENT = "dropbox-content";
+
+    public static final String DROPBOX_AVAILABILITY_FILE_CACHE = "dropboxAvailabilityFileCache";
+
+    public static final String SEAT_AVAILABILITY_FILE_DATA = "seatAvailabilityFileData";
+
+    public static final String COMMA = ",";
+
+    public static final String TEMP_PATH = "/tmp/temp";
+
+    public static final String TILDE = "~";
+
+    public static final String SEAT_AVAILABILITY_CSV = "/seat_availability.csv";
+
 }

@@ -7,6 +7,7 @@ import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import com.shankarsan.utilityscheduler.service.DropboxService;
+import com.shankarsan.utilityscheduler.service.DropboxWebhookService;
 import com.shankarsan.utilityscheduler.service.IrctcService;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
 import com.shankarsan.utilityscheduler.service.comms.MailService;
@@ -30,16 +31,21 @@ import java.util.stream.Collectors;
 public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     private final IrctcService irctcService;
 
-    private final DropboxService dropboxService;
+    private final DropboxWebhookService dropboxWebhookService;
 
     private final MailService mailService;
 
-    private final CacheManager caffeineCacheManager;
+    private final CacheManager cacheManager;
 
     public void processSeatAvailability() {
         try {
-            File downloadedFile = dropboxService.downloadFile(CommonConstants.SEAT_AVAILABILITY_CSV);
-            transformInputStream(new FileInputStream(downloadedFile))
+            File seatAvailabilityFileData = Optional.ofNullable(cacheManager)
+                    .map(cacheManager1 -> cacheManager1.getCache(CommonConstants.DROPBOX_AVAILABILITY_FILE_CACHE))
+                    .map(cache -> cache.get(CommonConstants.SEAT_AVAILABILITY_FILE_DATA))
+                    .map(Cache.ValueWrapper::get)
+                    .map(e -> (File)e)
+                    .orElseGet(dropboxWebhookService::refreshAvailabilityFileData);
+            transformInputStream(new FileInputStream(seatAvailabilityFileData))
                     .stream()
                     .map(this::invokeIrctcService)
                     .map(this::logSeatAvailability)
@@ -101,7 +107,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
     private void processMailEligibility(final SeatAvailabilityRequestDto seatAvailabilityRequestDto,
                                         final SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
-        Cache cache = caffeineCacheManager.getCache("availabilityCache");
+        Cache cache = cacheManager.getCache("availabilityCache");
         Optional.ofNullable(cache)
                 .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityRequestDto)))
                 .map(Cache.ValueWrapper::get)
