@@ -1,5 +1,7 @@
 package com.shankarsan.utilityscheduler.service.comms.impl;
 
+import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
+import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.service.comms.MailService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +24,14 @@ public class MailServiceImpl implements MailService {
 
     private final List<String> subjectList = new ArrayList<>();
 
+    private final ApplicationConfiguration applicationConfiguration;
+
     @Override
     public void sendMail(List<EmailDto> recipients, String body, String subject, @Nullable List<File> attachments) {
+        if (Boolean.FALSE.equals(applicationConfiguration.getMailFlag())) {
+            log.debug("Skipping send email");
+            return;
+        }
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         Map<EmailDto.EmailAddressLevel, List<EmailDto>> map = recipients.stream()
                 .collect(Collectors.groupingBy(EmailDto::getEmailAddressLevel));
@@ -43,13 +51,12 @@ public class MailServiceImpl implements MailService {
                         .toArray(String[]::new))
                 .orElse(null));
         if (subjectList.contains(subject)) {
-            subject = "Re: " + subject;
+            subject = CommonConstants.EMAIL_REPLY_PREFIX + subject;
         } else {
             subjectList.add(subject);
         }
         simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setFrom("noreply@utility-scheduler.com");
-        simpleMailMessage.setReplyTo("noreply@utility-scheduler.com");
+        simpleMailMessage.setReplyTo(CommonConstants.EMAIL_NOREPLY_UTILITY_SCHEDULER_COM);
         simpleMailMessage.setText(body);
         mailSender.send(simpleMailMessage);
     }
