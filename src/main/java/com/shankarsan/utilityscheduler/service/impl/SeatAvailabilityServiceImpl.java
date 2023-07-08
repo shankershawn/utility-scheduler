@@ -45,11 +45,14 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .map(Cache.ValueWrapper::get)
                     .map(e -> (File) e)
                     .orElseGet(dropboxWebhookService::refreshAvailabilityFileData);
-            transformInputStream(new FileInputStream(seatAvailabilityFileData))
+                transformInputStream(new FileInputStream(seatAvailabilityFileData))
                     .stream()
                     .map(this::invokeIrctcService)
                     .map(this::logSeatAvailability)
                     .forEach(this::mailSeatAvailabilityData);
+        } catch (FileNotFoundException fnfe) {
+            log.error("Exception encountered", fnfe);
+            dropboxWebhookService.refreshAvailabilityFileData();
         } catch (Exception e) {
             log.error("Exception encountered", e);
         }
