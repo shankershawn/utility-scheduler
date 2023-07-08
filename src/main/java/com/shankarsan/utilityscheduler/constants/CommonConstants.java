@@ -22,6 +22,8 @@ public class CommonConstants {
 
     public static final String DROPBOX_AVAILABILITY_FILE_CACHE = "dropboxAvailabilityFileCache";
 
+    public static final String AVAILABILITY_CACHE = "availabilityCache";
+
     public static final String SEAT_AVAILABILITY_FILE_DATA = "seatAvailabilityFileData";
 
     public static final String COMMA = ",";

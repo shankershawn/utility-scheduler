@@ -3,8 +3,10 @@ package com.shankarsan.utilityscheduler.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class AvailabilityDayDto {
+public class AvailabilityDayDto implements Serializable {
     @JsonProperty("availablityDate")
     private String availabilityDate; //18-7-2023
     @JsonProperty("availablityStatus")

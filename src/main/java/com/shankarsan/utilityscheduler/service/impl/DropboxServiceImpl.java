@@ -39,6 +39,7 @@ public class DropboxServiceImpl implements DropboxService {
         httpHeaders.add("Dropbox-API-Arg",
                 "{\"path\": \"" + path + "\"}");
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+        log.debug("Downloading file from dropbox");
         downloadResponseEntity = dropboxDownloadRestTemplate
                 .exchange("/2/files/download", HttpMethod.POST,
                         httpEntity, File.class, Collections.emptyMap());
@@ -47,6 +48,7 @@ public class DropboxServiceImpl implements DropboxService {
     }
 
     private RefreshTokenDto getRefreshToken() {
+        log.debug("Fetching refreshToken");
         String resourcePath = String.format("/oauth2/token?grant_type=refresh_token&refresh_token=%s",
                 applicationConfiguration.getSecret(CommonConstants.DROPBOX_REFRESH_TOKEN));
         ResponseEntity<RefreshTokenDto> refreshTokenResponseEntity = dropboxShortLivedTokenRestTemplate
