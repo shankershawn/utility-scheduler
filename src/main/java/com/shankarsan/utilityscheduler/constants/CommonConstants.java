@@ -32,4 +32,8 @@ public class CommonConstants {
 
     public static final String SEAT_AVAILABILITY_CSV = "/seat_availability.csv";
 
+    public static final String EMAIL_NOREPLY_UTILITY_SCHEDULER_COM = "noreply@utility-scheduler.com";
+
+    public static final String EMAIL_REPLY_PREFIX = "Re: ";
+
 }

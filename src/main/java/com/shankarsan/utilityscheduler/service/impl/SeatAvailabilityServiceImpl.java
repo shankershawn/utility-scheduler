@@ -6,7 +6,6 @@ import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
-import com.shankarsan.utilityscheduler.service.DropboxService;
 import com.shankarsan.utilityscheduler.service.DropboxWebhookService;
 import com.shankarsan.utilityscheduler.service.IrctcService;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
@@ -43,7 +42,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .map(cacheManager1 -> cacheManager1.getCache(CommonConstants.DROPBOX_AVAILABILITY_FILE_CACHE))
                     .map(cache -> cache.get(CommonConstants.SEAT_AVAILABILITY_FILE_DATA))
                     .map(Cache.ValueWrapper::get)
-                    .map(e -> (File)e)
+                    .map(e -> (File) e)
                     .orElseGet(dropboxWebhookService::refreshAvailabilityFileData);
             transformInputStream(new FileInputStream(seatAvailabilityFileData))
                     .stream()
@@ -51,7 +50,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .map(this::logSeatAvailability)
                     .forEach(this::mailResponse);
         } catch (Exception e) {
-            log.error("Exception encountere", e);
+            log.error("Exception encountered", e);
         }
     }
 

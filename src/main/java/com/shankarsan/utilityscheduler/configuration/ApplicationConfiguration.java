@@ -25,6 +25,8 @@ public class ApplicationConfiguration {
 
     private Map<String, String> headerMap;
 
+    private Boolean mailFlag;
+
     public String getCronExpression(Map<String, String> configMap) {
         return configMap.get(CommonConstants.CRON_EXPRESSION);
     }
