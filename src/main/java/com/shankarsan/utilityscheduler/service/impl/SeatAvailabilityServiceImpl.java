@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableCaching
 public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
+
     private final IrctcService irctcService;
 
     private final DropboxWebhookService dropboxWebhookService;
@@ -48,7 +49,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .stream()
                     .map(this::invokeIrctcService)
                     .map(this::logSeatAvailability)
-                    .forEach(this::mailResponse);
+                    .forEach(this::mailSeatAvailabilityData);
         } catch (Exception e) {
             log.error("Exception encountered", e);
         }
@@ -70,7 +71,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         return seatAvailabilityResponseDto;
     }
 
-    private void mailResponse(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+    private void mailSeatAvailabilityData(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         Optional.ofNullable(seatAvailabilityResponseDto).map(SeatAvailabilityResponseDto::getEmailDtoList)
                 .ifPresent(list -> {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -106,7 +107,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
     private void processMailEligibility(final SeatAvailabilityRequestDto seatAvailabilityRequestDto,
                                         final SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
-        Cache cache = cacheManager.getCache("availabilityCache");
+        Cache cache = cacheManager.getCache(CommonConstants.AVAILABILITY_CACHE);
         Optional.ofNullable(cache)
                 .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityRequestDto)))
                 .map(Cache.ValueWrapper::get)
@@ -116,11 +117,15 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                                 .map(SeatAvailabilityResponseDto::getAvlDayList)
                                 .ifPresent(fetchedAvailabilityData -> {
                                     if (!cachedAvailabilityData.equals(fetchedAvailabilityData)) {
+                                        log.debug("Data changed:::Setting cache and sending email {}",
+                                                seatAvailabilityResponseDto);
                                         cache.put(getCacheKey(seatAvailabilityRequestDto), seatAvailabilityResponseDto);
                                         setMailParams(seatAvailabilityRequestDto, seatAvailabilityResponseDto,
                                                 Boolean.TRUE);
                                     }
                                 }), () -> {
+                    log.debug("Availability data not found in cache:::Setting cache and sending email {}",
+                            seatAvailabilityResponseDto);
                     cache.put(getCacheKey(seatAvailabilityRequestDto), seatAvailabilityResponseDto);
                     setMailParams(seatAvailabilityRequestDto, seatAvailabilityResponseDto, Boolean.FALSE);
                 });
