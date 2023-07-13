@@ -27,7 +27,7 @@ public class SeatAvailabilityRequestDto {
     private List<EmailDto> emailDtoList;
 
     public enum QuotaCode {
-        GN
+        GN, TQ, LD, SS
     }
 
     @Getter
