@@ -27,7 +27,7 @@ public class IrctcServiceImpl implements IrctcService {
                         seatAvailabilityRequestDto.getQuotaCode().name(),
                         seatAvailabilityRequestDto.getFromStnCode(),
                         seatAvailabilityRequestDto.getToStnCode(),
-                        seatAvailabilityRequestDto.getJourneyDate());
+                        seatAvailabilityRequestDto.getFromDate());
         ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate.exchange(RequestEntity
                 .get(url).build(), SeatAvailabilityResponseDto.class);
         return responseEntity.getBody();

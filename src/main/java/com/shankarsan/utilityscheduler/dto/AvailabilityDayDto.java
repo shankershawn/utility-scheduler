@@ -7,6 +7,9 @@ import java.io.Serializable;
 
 @Data
 public class AvailabilityDayDto implements Serializable {
+
+    private static final long serialVersionUID = -3L;
+
     @JsonProperty("availablityDate")
     private String availabilityDate; //18-7-2023
     @JsonProperty("availablityStatus")
