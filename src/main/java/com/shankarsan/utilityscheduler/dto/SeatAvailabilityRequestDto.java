@@ -4,11 +4,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Builder
-public class SeatAvailabilityRequestDto {
+public class SeatAvailabilityRequestDto implements Serializable {
+
+    private static final long serialVersionUID = -1L;
+
     private final String paymentFlag = "N";
     private final Boolean concessionBooking = false;
     private final Boolean ftBooking = false;
@@ -22,7 +26,8 @@ public class SeatAvailabilityRequestDto {
     private String fromStnCode;
     private String toStnCode;
     private final Boolean isLogedinReq = false;
-    private String journeyDate; //DD-MM-YYYY format
+    private String fromDate; //DD-MM-YYYY format
+    private String toDate; //DD-MM-YYYY format
     private ClassCode classCode;
     private List<EmailDto> emailDtoList;
 

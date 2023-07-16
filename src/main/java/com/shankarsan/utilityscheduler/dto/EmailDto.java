@@ -9,6 +9,8 @@ import java.io.Serializable;
 @Data
 public class EmailDto implements Serializable {
 
+    private static final long serialVersionUID = -4L;
+
     private String emailAddress;
 
     @Builder.Default
