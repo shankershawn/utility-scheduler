@@ -14,9 +14,9 @@ public class AvailabilityDayDto implements Serializable {
     private String availabilityDate; //18-7-2023
     @JsonProperty("availablityStatus")
     private String availabilityStatus; //RLWL1/WL1
-    private String reasonType; //S
+    private transient String reasonType; //S
     @JsonProperty("availablityType")
-    private String availabilityType; //3
-    private String currentBkgFlag; //N
-    private String wlType; //12
+    private transient String availabilityType; //3
+    private transient String currentBkgFlag; //N
+    private transient String wlType; //12
 }

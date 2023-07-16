@@ -4,6 +4,7 @@ import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.consumer.SeatAvailabilityEmailProcessor;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
+import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;
 import com.shankarsan.utilityscheduler.service.DropboxWebhookService;
 import com.shankarsan.utilityscheduler.service.IrctcService;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
     private final SeatAvailabilityEmailProcessor seatAvailabilityEmailProcessor;
 
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
     public void processSeatAvailability() {
         try {
@@ -70,15 +70,19 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     }
 
     private List<SeatAvailabilityResponseDto> invokeIrctcService(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
-        return seatAvailabilityRequestDateTransformer.apply(seatAvailabilityRequestDto).stream()
+        final String originalFromDate = seatAvailabilityRequestDto.getFromDate();
+        List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos = seatAvailabilityRequestDateTransformer
+                .apply(seatAvailabilityRequestDto).stream()
                 .map(date -> {
-                    seatAvailabilityRequestDto.setFromDate(simpleDateFormat.format(date));
+                    seatAvailabilityRequestDto.setFromDate(seatAvailabilityDateParser.format(date));
                     SeatAvailabilityResponseDto seatAvailabilityResponseDto = irctcService
                             .fetchAvailabilityData(seatAvailabilityRequestDto);
                     seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto);
                     return seatAvailabilityResponseDto;
                 })
                 .collect(Collectors.toList());
+        seatAvailabilityRequestDto.setFromDate(originalFromDate);
+        return seatAvailabilityResponseDtos;
     }
 
     private SeatAvailabilityResponseDto logSeatAvailability(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {

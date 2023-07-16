@@ -21,5 +21,5 @@ public class SeatAvailabilityResponseDto implements Serializable {
     private List<EmailDto> emailDtoList;
     private String errorMessage;
     private String mailSubject;
-    private SeatAvailabilityRequestDto seatAvailabilityRequestDto;
+    private transient SeatAvailabilityRequestDto seatAvailabilityRequestDto;
 }

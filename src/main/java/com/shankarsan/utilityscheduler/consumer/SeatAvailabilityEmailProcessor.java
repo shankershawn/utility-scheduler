@@ -1,10 +1,11 @@
 package com.shankarsan.utilityscheduler.consumer;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
+import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
+import com.shankarsan.utilityscheduler.filter.SeatAvailabilityDateFilter;
 import com.shankarsan.utilityscheduler.service.comms.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,11 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +28,10 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
 
     private final MailService mailService;
 
+    private final Gson gsonBean;
+
+    private final SeatAvailabilityDateFilter seatAvailabilityDateFilter;
+
     @Override
     public void accept(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         processMailEligibility(seatAvailabilityResponseDto);
@@ -31,14 +39,20 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
     }
 
     private void mailSeatAvailabilityData(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+        Predicate<AvailabilityDayDto> dateFilter = Optional.ofNullable(seatAvailabilityResponseDto)
+                .map(seatAvailabilityDateFilter::filterSeatAvailabilityData)
+                .orElseThrow(() -> new IllegalStateException("Filter predicate not found"));
         Optional.ofNullable(seatAvailabilityResponseDto).map(SeatAvailabilityResponseDto::getEmailDtoList)
-                .ifPresent(list -> {
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    mailService.sendMail(list, Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
-                                    .map(gson::toJson)
-                                    .orElse(seatAvailabilityResponseDto.getErrorMessage()),
-                            seatAvailabilityResponseDto.getMailSubject(), null);
-                });
+                .ifPresent(list ->
+                        mailService.sendMail(list, Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
+                                        .map(Collection::stream)
+                                        .map(availabilityDayDtoStream -> availabilityDayDtoStream
+                                                .filter(dateFilter)
+                                                .collect(Collectors.toList()))
+                                        .map(gsonBean::toJson)
+                                        .orElse(seatAvailabilityResponseDto.getErrorMessage()),
+                                seatAvailabilityResponseDto.getMailSubject(), null)
+                );
     }
 
     private void processMailEligibility(final SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
