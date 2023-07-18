@@ -15,10 +15,10 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+@Service("plain")
 @RequiredArgsConstructor
 @Slf4j
-public class MailServiceImpl implements MailService {
+public class SimpleMailServiceImpl implements MailService {
 
     private final MailSender mailSender;
 
@@ -35,21 +35,21 @@ public class MailServiceImpl implements MailService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         Map<EmailDto.EmailAddressLevel, List<EmailDto>> map = recipients.stream()
                 .collect(Collectors.groupingBy(EmailDto::getEmailAddressLevel));
-        simpleMailMessage.setTo(Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.TO))
+        Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.TO))
                 .map(Collection::stream)
                 .map(e -> e.map(EmailDto::getEmailAddress)
                         .toArray(String[]::new))
-                .orElse(null));
-        simpleMailMessage.setCc(Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.CC))
+                .ifPresent(simpleMailMessage::setTo);
+        Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.CC))
                 .map(Collection::stream)
                 .map(e -> e.map(EmailDto::getEmailAddress)
                         .toArray(String[]::new))
-                .orElse(null));
-        simpleMailMessage.setBcc(Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.BCC))
+                .ifPresent(simpleMailMessage::setCc);
+        Optional.ofNullable(map.get(EmailDto.EmailAddressLevel.BCC))
                 .map(Collection::stream)
                 .map(e -> e.map(EmailDto::getEmailAddress)
                         .toArray(String[]::new))
-                .orElse(null));
+                .ifPresent(simpleMailMessage::setBcc);
         if (subjectList.contains(subject)) {
             subject = CommonConstants.EMAIL_REPLY_PREFIX + subject;
         } else {

@@ -37,13 +37,16 @@ public class SeatAvailabilityResponseFlattenTransformer implements
                                 seatAvailabilityResponseDtoStream
                                         .findAny()
                                         .map(SeatAvailabilityResponseDto::getTrainName)
-                                        .orElseThrow(() -> new IllegalStateException("Train name not found")))
-                        .orElseThrow(() -> new IllegalStateException("Train name not found")))
+                                        .orElse(null))
+                        .orElse(null))
                 .avlDayList(getOptionalWithNewStream(seatAvailabilityResponseDtos)
                         .map(seatAvailabilityResponseDtoStream ->
                                 seatAvailabilityResponseDtoStream
-                                        .flatMap(seatAvailabilityResponseDto -> seatAvailabilityResponseDto
-                                                .getAvlDayList().stream())
+                                        .flatMap(seatAvailabilityResponseDto -> Optional
+                                                .ofNullable(seatAvailabilityResponseDto)
+                                                .map(SeatAvailabilityResponseDto::getAvlDayList)
+                                                .map(Collection::stream)
+                                                .orElse(Stream.empty()))
                                         .collect(Collectors.toList())
                         ).orElse(null))
                 .emailDtoList(getOptionalWithNewStream(seatAvailabilityResponseDtos)

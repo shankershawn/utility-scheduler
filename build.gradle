@@ -38,10 +38,12 @@ dependencies {
 	implementation 'com.dropbox.core:dropbox-core-sdk:5.4.5'
 	implementation 'org.springframework.vault:spring-vault-core'
 	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.j2html:j2html:1.6.0'
 
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.projectlombok:lombok:1.18.26'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 }

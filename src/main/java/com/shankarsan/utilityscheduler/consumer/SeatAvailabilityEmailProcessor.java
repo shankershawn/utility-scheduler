@@ -1,36 +1,35 @@
 package com.shankarsan.utilityscheduler.consumer;
 
-import com.google.gson.Gson;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
-import com.shankarsan.utilityscheduler.filter.SeatAvailabilityDateFilter;
+import com.shankarsan.utilityscheduler.exception.ApplicationException;
 import com.shankarsan.utilityscheduler.service.comms.MailService;
+import j2html.rendering.FlatHtml;
+import j2html.rendering.TagBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailabilityResponseDto> {
 
+    public static final String STYLE = "style";
     private final CacheManager cacheManager;
 
+    @Qualifier("html")
     private final MailService mailService;
-
-    private final Gson gsonBean;
-
-    private final SeatAvailabilityDateFilter seatAvailabilityDateFilter;
 
     @Override
     public void accept(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
@@ -38,18 +37,57 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
         mailSeatAvailabilityData(seatAvailabilityResponseDto);
     }
 
+    private String getHtmlEmail(List<AvailabilityDayDto> availabilityDayDtos) {
+        FlatHtml<StringBuilder> stringBuilderFlatHtml = FlatHtml.inMemory();
+        try {
+            TagBuilder rowBuilder;
+            stringBuilderFlatHtml.appendStartTag("html").completeTag();
+            stringBuilderFlatHtml.appendStartTag("body").completeTag();
+            stringBuilderFlatHtml.appendStartTag("table")
+                    .appendAttribute(STYLE, "border: 1px solid black;")
+                    .completeTag();
+            stringBuilderFlatHtml.appendStartTag("tr")
+                    .appendAttribute(STYLE, "background-color: #F7C8E0;")
+                    .completeTag();
+            stringBuilderFlatHtml.appendStartTag("th").completeTag();
+            stringBuilderFlatHtml.appendUnescapedText("Date");
+            stringBuilderFlatHtml.appendEndTag("th");
+            stringBuilderFlatHtml.appendStartTag("th").completeTag();
+            stringBuilderFlatHtml.appendUnescapedText("Availability");
+            stringBuilderFlatHtml.appendEndTag("th");
+            stringBuilderFlatHtml.appendEndTag("tr");
+            for (AvailabilityDayDto availabilityDayDto : availabilityDayDtos) {
+                rowBuilder = stringBuilderFlatHtml.appendStartTag("tr");
+                if (availabilityDayDto.getAvailabilityStatus().contains("AVAILABLE")) {
+                    rowBuilder.appendAttribute(STYLE, "background-color: #B9F3E4;");
+                } else if (availabilityDayDto.getAvailabilityStatus().contains("RAC")) {
+                    rowBuilder.appendAttribute(STYLE, "background-color: #FFFEC4;");
+                } else if (availabilityDayDto.getAvailabilityStatus().contains("WL")) {
+                    rowBuilder.appendAttribute(STYLE, "background-color: #FF9B9B;");
+                }
+                rowBuilder.completeTag();
+                stringBuilderFlatHtml.appendStartTag("td").completeTag();
+                stringBuilderFlatHtml.appendUnescapedText(availabilityDayDto.getAvailabilityDate());
+                stringBuilderFlatHtml.appendEndTag("td");
+                stringBuilderFlatHtml.appendStartTag("td").completeTag();
+                stringBuilderFlatHtml.appendUnescapedText(availabilityDayDto.getAvailabilityStatus());
+                stringBuilderFlatHtml.appendEndTag("td");
+                stringBuilderFlatHtml.appendEndTag("tr");
+            }
+            stringBuilderFlatHtml.appendEndTag("table");
+            stringBuilderFlatHtml.appendEndTag("body");
+            stringBuilderFlatHtml.appendEndTag("html");
+        } catch (IOException e) {
+            throw new ApplicationException(e);
+        }
+        return stringBuilderFlatHtml.output().toString();
+    }
+
     private void mailSeatAvailabilityData(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
-        Predicate<AvailabilityDayDto> dateFilter = Optional.ofNullable(seatAvailabilityResponseDto)
-                .map(seatAvailabilityDateFilter::filterSeatAvailabilityData)
-                .orElseThrow(() -> new IllegalStateException("Filter predicate not found"));
         Optional.ofNullable(seatAvailabilityResponseDto).map(SeatAvailabilityResponseDto::getEmailDtoList)
                 .ifPresent(list ->
                         mailService.sendMail(list, Optional.ofNullable(seatAvailabilityResponseDto.getAvlDayList())
-                                        .map(Collection::stream)
-                                        .map(availabilityDayDtoStream -> availabilityDayDtoStream
-                                                .filter(dateFilter)
-                                                .collect(Collectors.toList()))
-                                        .map(gsonBean::toJson)
+                                        .map(this::getHtmlEmail)
                                         .orElse(seatAvailabilityResponseDto.getErrorMessage()),
                                 seatAvailabilityResponseDto.getMailSubject(), null)
                 );
