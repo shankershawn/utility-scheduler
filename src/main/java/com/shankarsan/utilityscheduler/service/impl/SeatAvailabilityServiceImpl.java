@@ -2,8 +2,10 @@ package com.shankarsan.utilityscheduler.service.impl;
 
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.consumer.SeatAvailabilityEmailProcessor;
+import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
+import com.shankarsan.utilityscheduler.filter.SeatAvailabilityDateFilter;
 import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;
 import com.shankarsan.utilityscheduler.service.DropboxWebhookService;
 import com.shankarsan.utilityscheduler.service.IrctcService;
@@ -17,12 +19,15 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +52,9 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
+    private final SeatAvailabilityDateFilter seatAvailabilityDateFilter;
+
+    @Transactional
     public void processSeatAvailability() {
         try {
             File seatAvailabilityFileData = Optional.ofNullable(cacheManager)
@@ -59,6 +67,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
             seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
                     .map(this::invokeIrctcService)
                     .map(seatAvailabilityResponseFlattenTransformer)
+                    .map(this::applyDateFilter)
                     .map(this::logSeatAvailability)
                     .forEach(seatAvailabilityEmailProcessor);
         } catch (FileNotFoundException fnfe) {
@@ -69,7 +78,23 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         }
     }
 
-    private List<SeatAvailabilityResponseDto> invokeIrctcService(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
+    private SeatAvailabilityResponseDto applyDateFilter(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+        Predicate<AvailabilityDayDto> dateFilter = Optional.ofNullable(seatAvailabilityResponseDto)
+                .map(seatAvailabilityDateFilter::filterSeatAvailabilityData)
+                .orElseThrow(() -> new IllegalStateException("Filter predicate not found"));
+
+        Optional.of(seatAvailabilityResponseDto)
+                .map(SeatAvailabilityResponseDto::getAvlDayList)
+                .map(Collection::stream)
+                .map(availabilityDayDtoStream -> availabilityDayDtoStream
+                        .filter(dateFilter)
+                        .collect(Collectors.toList()))
+                .ifPresent(seatAvailabilityResponseDto::setAvlDayList);
+        return seatAvailabilityResponseDto;
+    }
+
+    private List<SeatAvailabilityResponseDto> invokeIrctcService
+            (SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
         final String originalFromDate = seatAvailabilityRequestDto.getFromDate();
         List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos = seatAvailabilityRequestDateTransformer
                 .apply(seatAvailabilityRequestDto).stream()
