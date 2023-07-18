@@ -118,6 +118,8 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                 }), () ->
                         Optional.ofNullable(seatAvailabilityResponseDto)
                                 .map(SeatAvailabilityResponseDto::getAvlDayList)
+                                .map(List::size)
+                                .filter(size -> size > 0)
                                 .ifPresent(dayDtos -> {
                                     log.debug("Availability data not found in cache:::" +
                                                     "Setting cache and sending email {}",
