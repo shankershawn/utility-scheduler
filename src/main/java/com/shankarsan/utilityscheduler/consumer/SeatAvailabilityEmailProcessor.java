@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
@@ -102,6 +103,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                 .ifPresentOrElse(cachedAvailabilityData ->
                         Optional.ofNullable(seatAvailabilityResponseDto)
                                 .map(SeatAvailabilityResponseDto::getAvlDayList)
+                                .filter(Predicate.not(List::isEmpty))
                                 .ifPresent(fetchedAvailabilityData -> {
                                     if (!cachedAvailabilityData.equals(fetchedAvailabilityData)) {
                                         log.debug("Data changed:::Setting cache and sending email {}",
@@ -118,9 +120,8 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                 }), () ->
                         Optional.ofNullable(seatAvailabilityResponseDto)
                                 .map(SeatAvailabilityResponseDto::getAvlDayList)
-                                .map(List::size)
-                                .filter(size -> size > 0)
-                                .ifPresent(dayDtos -> {
+                                .filter(Predicate.not(List::isEmpty))
+                                .ifPresent(availabilityDayDtos -> {
                                     log.debug("Availability data not found in cache:::" +
                                                     "Setting cache and sending email {}",
                                             seatAvailabilityResponseDto);
