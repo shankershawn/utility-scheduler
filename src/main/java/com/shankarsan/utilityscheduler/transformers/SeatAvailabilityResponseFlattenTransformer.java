@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,15 +29,17 @@ public class SeatAvailabilityResponseFlattenTransformer implements
                 .errorMessage(getOptionalWithNewStream(seatAvailabilityResponseDtos)
                         .map(seatAvailabilityResponseDtoStream ->
                                 seatAvailabilityResponseDtoStream
-                                        .findAny()
                                         .map(SeatAvailabilityResponseDto::getErrorMessage)
+                                        .filter(Objects::nonNull)
+                                        .findAny()
                                         .orElse(null))
                         .orElse(null))
                 .trainName(getOptionalWithNewStream(seatAvailabilityResponseDtos)
                         .map(seatAvailabilityResponseDtoStream ->
                                 seatAvailabilityResponseDtoStream
-                                        .findAny()
                                         .map(SeatAvailabilityResponseDto::getTrainName)
+                                        .filter(Objects::nonNull)
+                                        .findAny()
                                         .orElse(null))
                         .orElse(null))
                 .avlDayList(getOptionalWithNewStream(seatAvailabilityResponseDtos)
@@ -52,17 +55,11 @@ public class SeatAvailabilityResponseFlattenTransformer implements
                 .emailDtoList(getOptionalWithNewStream(seatAvailabilityResponseDtos)
                         .map(seatAvailabilityResponseDtoStream ->
                                 seatAvailabilityResponseDtoStream
-                                        .findAny()
                                         .map(SeatAvailabilityResponseDto::getEmailDtoList)
+                                        .filter(Objects::nonNull)
+                                        .findAny()
                                         .orElse(null)
                         ).orElse(null))
-                .mailSubject(getOptionalWithNewStream(seatAvailabilityResponseDtos)
-                        .map(seatAvailabilityResponseDtoStream ->
-                                seatAvailabilityResponseDtoStream
-                                        .findAny()
-                                        .map(SeatAvailabilityResponseDto::getMailSubject)
-                                        .orElse(null))
-                        .orElse(null))
                 .build();
     }
 
