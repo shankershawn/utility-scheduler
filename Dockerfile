@@ -1,6 +1,5 @@
 FROM eclipse-temurin:11-jdk-alpine
 VOLUME /app
-ARG JAR_FILE
 ENV VAULT_TOKEN=""
-COPY ${JAR_FILE} app.jar
+COPY build/libs/utility-scheduler-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-Dvault.token=${VAULT_TOKEN}", "-jar", "app.jar"]
