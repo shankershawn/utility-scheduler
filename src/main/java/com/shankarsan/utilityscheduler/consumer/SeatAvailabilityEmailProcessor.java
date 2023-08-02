@@ -95,6 +95,12 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
     }
 
     private void processMailEligibility(final SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+        Optional<String> errorMessageOptional = Optional.ofNullable(seatAvailabilityResponseDto)
+                .map(SeatAvailabilityResponseDto::getErrorMessage);
+        if(errorMessageOptional.isPresent()) {
+            log.debug("Error message found: {}. Returning", errorMessageOptional.get());
+            return;
+        }
         Cache cache = cacheManager.getCache(CommonConstants.AVAILABILITY_CACHE);
         Optional.ofNullable(cache)
                 .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityResponseDto.getSeatAvailabilityRequestDto())))
