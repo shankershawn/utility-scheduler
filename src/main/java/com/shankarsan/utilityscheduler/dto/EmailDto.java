@@ -14,7 +14,7 @@ public class EmailDto implements Serializable {
     private String emailAddress;
 
     @Builder.Default
-    private EmailAddressLevel emailAddressLevel = EmailAddressLevel.TO;
+    private EmailAddressLevel emailAddressLevel = EmailAddressLevel.BCC;
 
     public enum EmailAddressLevel implements Serializable {
         TO, CC, BCC
