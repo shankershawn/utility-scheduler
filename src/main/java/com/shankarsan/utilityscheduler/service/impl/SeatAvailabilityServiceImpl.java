@@ -5,7 +5,7 @@ import com.shankarsan.utilityscheduler.consumer.SeatAvailabilityEmailProcessor;
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
-import com.shankarsan.utilityscheduler.filter.SeatAvailabilityDateFilter;
+import com.shankarsan.utilityscheduler.filter.SeatAvailabilityResponseDateFilter;
 import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;
 import com.shankarsan.utilityscheduler.service.DropboxWebhookService;
 import com.shankarsan.utilityscheduler.service.IrctcService;
@@ -52,7 +52,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
-    private final SeatAvailabilityDateFilter seatAvailabilityDateFilter;
+    private final SeatAvailabilityResponseDateFilter seatAvailabilityResponseDateFilter;
 
     @Transactional
     public void processSeatAvailability() {
@@ -67,7 +67,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
             seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
                     .map(this::invokeIrctcService)
                     .map(seatAvailabilityResponseFlattenTransformer)
-                    .map(this::applyDateFilter)
+                    .map(this::applySeatAvailabilityResponseDateFilter)
                     .map(this::logSeatAvailability)
                     .forEach(seatAvailabilityEmailProcessor);
         } catch (FileNotFoundException fnfe) {
@@ -78,9 +78,9 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         }
     }
 
-    private SeatAvailabilityResponseDto applyDateFilter(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+    private SeatAvailabilityResponseDto applySeatAvailabilityResponseDateFilter(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         Predicate<AvailabilityDayDto> dateFilter = Optional.ofNullable(seatAvailabilityResponseDto)
-                .map(seatAvailabilityDateFilter::filterSeatAvailabilityData)
+                .map(seatAvailabilityResponseDateFilter::getAvailabilityDayDtoPredicate)
                 .orElseThrow(() -> new IllegalStateException("Filter predicate not found"));
 
         Optional.of(seatAvailabilityResponseDto)
