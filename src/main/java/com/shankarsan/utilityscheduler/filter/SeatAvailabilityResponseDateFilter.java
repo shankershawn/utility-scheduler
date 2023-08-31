@@ -15,11 +15,11 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SeatAvailabilityDateFilter {
+public class SeatAvailabilityResponseDateFilter {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
-    public Predicate<AvailabilityDayDto> filterSeatAvailabilityData
+    public Predicate<AvailabilityDayDto> getAvailabilityDayDtoPredicate
             (SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         return availabilityDayDto -> {
             Date requestToDate = Optional.ofNullable(seatAvailabilityResponseDto)
