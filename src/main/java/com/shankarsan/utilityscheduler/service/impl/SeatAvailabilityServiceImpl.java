@@ -64,7 +64,8 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .map(e -> (File) e)
                     .orElseGet(dropboxWebhookService::refreshAvailabilityFileData);
 
-            seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
+            seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData))
+                    .stream().parallel()
                     .map(this::invokeIrctcService)
                     .map(seatAvailabilityResponseFlattenTransformer)
                     .map(this::applySeatAvailabilityResponseDateFilter)
