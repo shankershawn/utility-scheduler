@@ -78,7 +78,7 @@ public class RestConfiguration {
             if (inputMessage instanceof ClientHttpResponse) {
                 int bytesRead;
                 byte[] byteArray = new byte[1024];
-                tempFile = new File(CommonConstants.TEMP_PATH);
+                tempFile = new File(CommonConstants.TEMP_DIR, "temp");
                 try (OutputStream outputStream = new FileOutputStream(tempFile)) {
                     while ((bytesRead = inputMessage.getBody().read(byteArray)) != -1) {
                         outputStream.write(byteArray, 0, bytesRead);

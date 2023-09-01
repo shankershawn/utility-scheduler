@@ -26,13 +26,13 @@ public class CommonConstants {
 
     public static final String SEAT_AVAILABILITY_FILE_DATA = "seatAvailabilityFileData";
 
-    public static final String COMMA = ",";
+    public static final String PIPE = "\\|";
 
-    public static final String TEMP_PATH = "/tmp/temp";
+    public static final String TEMP_DIR = "/tmp";
 
     public static final String TILDE = "~";
 
-    public static final String SEAT_AVAILABILITY_CSV = "/seat_availability.csv";
+    public static final String SEAT_AVAILABILITY_DAT = "/seat_availability.dat";
 
     public static final String EMAIL_NOREPLY_UTILITY_SCHEDULER_COM = "noreply@utility-scheduler.com";
 
