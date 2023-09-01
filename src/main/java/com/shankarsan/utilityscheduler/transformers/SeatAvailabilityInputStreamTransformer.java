@@ -28,7 +28,7 @@ public class SeatAvailabilityInputStreamTransformer implements Function<InputStr
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         return bufferedReader.lines()
                 .map(line -> {
-                    String[] lineArray = line.split(CommonConstants.COMMA);
+                    String[] lineArray = line.split(CommonConstants.PIPE);
                     return SeatAvailabilityRequestDto.builder()
                             .trainNumber(lineArray[0])
                             .classCode(SeatAvailabilityRequestDto.ClassCode.valueOf(lineArray[1]))

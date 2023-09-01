@@ -23,7 +23,7 @@ public class DropboxWebhookServiceImpl implements DropboxWebhookService {
     @Override
     public File refreshAvailabilityFileData() {
         log.debug("Refreshing file data from Dropbox");
-        File availabilityFileData = dropboxService.downloadFile(CommonConstants.SEAT_AVAILABILITY_CSV);
+        File availabilityFileData = dropboxService.downloadFile(CommonConstants.SEAT_AVAILABILITY_DAT);
         Optional.ofNullable(cacheManager)
                 .map(e -> e.getCache(CommonConstants.DROPBOX_AVAILABILITY_FILE_CACHE))
                 .ifPresent(cache -> cache.put(CommonConstants.SEAT_AVAILABILITY_FILE_DATA, availabilityFileData));
