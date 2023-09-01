@@ -2,6 +2,7 @@ package com.shankarsan.utilityscheduler.consumer;
 
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
+import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import com.shankarsan.utilityscheduler.exception.ApplicationException;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -97,17 +99,20 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
     private void processMailEligibility(final SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         Optional<String> errorMessageOptional = Optional.ofNullable(seatAvailabilityResponseDto)
                 .map(SeatAvailabilityResponseDto::getErrorMessage);
-        if(errorMessageOptional.isPresent()) {
+        if (errorMessageOptional.isPresent()) {
             log.debug("Error message found: {}. Returning", errorMessageOptional.get());
             return;
         }
         Cache cache = cacheManager.getCache(CommonConstants.AVAILABILITY_CACHE);
+        SeatAvailabilityRequestDto seatAvailabilityRequestDto = Optional.ofNullable(seatAvailabilityResponseDto)
+                .map(SeatAvailabilityResponseDto::getSeatAvailabilityRequestDto)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid seatAvailabilityRequestDto"));
         Optional.ofNullable(cache)
-                .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityResponseDto.getSeatAvailabilityRequestDto())))
+                .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityRequestDto)))
                 .map(Cache.ValueWrapper::get)
                 .map(e -> ((SeatAvailabilityResponseDto) e).getAvlDayList())
                 .ifPresentOrElse(cachedAvailabilityData ->
-                        Optional.ofNullable(seatAvailabilityResponseDto)
+                        Optional.of(seatAvailabilityResponseDto)
                                 .map(SeatAvailabilityResponseDto::getAvlDayList)
                                 .filter(Predicate.not(List::isEmpty))
                                 .ifPresent(fetchedAvailabilityData -> {
@@ -124,7 +129,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                                 Boolean.TRUE);
                                     }
                                 }), () ->
-                        Optional.ofNullable(seatAvailabilityResponseDto)
+                        Optional.of(seatAvailabilityResponseDto)
                                 .map(SeatAvailabilityResponseDto::getAvlDayList)
                                 .filter(Predicate.not(List::isEmpty))
                                 .ifPresent(availabilityDayDtos -> {
@@ -152,7 +157,12 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                 .append(seatAvailabilityRequestDto1.getFromDate())
                                 .append(seatAvailabilityRequestDto1.getToDate())
                                 .append(seatAvailabilityRequestDto1.getFromStnCode())
-                                .append(seatAvailabilityRequestDto1.getToStnCode()).toString())
+                                .append(seatAvailabilityRequestDto1.getToStnCode())
+                                .append(seatAvailabilityRequestDto1.getEmailDtoList()
+                                        .stream()
+                                        .map(EmailDto::getEmailAddress)
+                                        .collect(Collectors.joining()))
+                                .toString())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid seatAvailabilityRequestDto"));
     }
 
