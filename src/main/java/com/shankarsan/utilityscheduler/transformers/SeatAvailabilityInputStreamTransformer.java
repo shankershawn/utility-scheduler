@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -57,6 +58,7 @@ public class SeatAvailabilityInputStreamTransformer implements Function<InputStr
                                              EmailDto.EmailAddressLevel emailAddressLevel) {
         Arrays.stream(lineArrayItem
                         .split(CommonConstants.TILDE))
+                .filter(Predicate.not(String::isBlank))
                 .map(e -> EmailDto.builder()
                         .emailAddress(e)
                         .emailAddressLevel(emailAddressLevel)
