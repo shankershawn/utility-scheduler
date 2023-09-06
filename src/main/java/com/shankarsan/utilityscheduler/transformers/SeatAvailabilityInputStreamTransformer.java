@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -37,15 +38,29 @@ public class SeatAvailabilityInputStreamTransformer implements Function<InputStr
                             .toStnCode(lineArray[4])
                             .fromDate(lineArray[5])
                             .toDate(lineArray[6])
-                            .emailDtoList(Arrays.stream(lineArray[7]
-                                            .split(CommonConstants.TILDE))
-                                    .map(e -> EmailDto.builder()
-                                            .emailAddress(e)
-                                            .build())
-                                    .collect(Collectors.toList()))
+                            .emailDtoList(getEmailDtoList(lineArray))
                             .build();
                 })
                 .filter(seatAvailabilityRequestDateFilter)
                 .collect(Collectors.toList());
+    }
+
+    private List<EmailDto> getEmailDtoList(String[] lineArray) {
+        final List<EmailDto> emailDtoList = new ArrayList<>();
+        populateEmailDtoList(lineArray[7], emailDtoList, EmailDto.EmailAddressLevel.TO);
+        populateEmailDtoList(lineArray[8], emailDtoList, EmailDto.EmailAddressLevel.CC);
+        populateEmailDtoList(lineArray[9], emailDtoList, EmailDto.EmailAddressLevel.BCC);
+        return emailDtoList;
+    }
+
+    private static void populateEmailDtoList(String lineArrayItem, List<EmailDto> emailDtoList,
+                                             EmailDto.EmailAddressLevel emailAddressLevel) {
+        Arrays.stream(lineArrayItem
+                        .split(CommonConstants.TILDE))
+                .map(e -> EmailDto.builder()
+                        .emailAddress(e)
+                        .emailAddressLevel(emailAddressLevel)
+                        .build())
+                .forEach(emailDtoList::add);
     }
 }
