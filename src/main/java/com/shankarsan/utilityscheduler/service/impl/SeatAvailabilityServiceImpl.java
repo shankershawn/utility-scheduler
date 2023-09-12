@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -67,6 +65,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
             seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
                     .map(this::invokeIrctcService)
                     .map(seatAvailabilityResponseFlattenTransformer)
+                    .map(this::filterRepeatedAvailabilityDates)
                     .map(this::applySeatAvailabilityResponseDateFilter)
                     .map(this::logSeatAvailability)
                     .forEach(seatAvailabilityEmailProcessor);
@@ -76,6 +75,18 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         } catch (Exception e) {
             log.error("Exception encountered", e);
         }
+    }
+
+    private SeatAvailabilityResponseDto filterRepeatedAvailabilityDates(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+        final List<AvailabilityDayDto> availabilityDayDtos = Optional.ofNullable(seatAvailabilityResponseDto)
+                .map(SeatAvailabilityResponseDto::getAvlDayList)
+                .orElseThrow(() -> new IllegalStateException("availabilityDayDtos is null"));
+
+        final Set<AvailabilityDayDto> availabilityDayDtos1 = new LinkedHashSet<>();
+        availabilityDayDtos1.addAll(availabilityDayDtos);
+        availabilityDayDtos.clear();
+        availabilityDayDtos.addAll(availabilityDayDtos1);
+        return seatAvailabilityResponseDto;
     }
 
     private SeatAvailabilityResponseDto applySeatAvailabilityResponseDateFilter(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
