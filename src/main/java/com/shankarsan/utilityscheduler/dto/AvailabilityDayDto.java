@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 public class AvailabilityDayDto implements Serializable {
@@ -19,4 +20,17 @@ public class AvailabilityDayDto implements Serializable {
     private transient String availabilityType; //3
     private transient String currentBkgFlag; //N
     private transient String wlType; //12
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AvailabilityDayDto that = (AvailabilityDayDto) o;
+        return availabilityDate.equals(that.availabilityDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(availabilityDate);
+    }
 }
