@@ -67,18 +67,21 @@ jobs:
         token: ${{ secrets.VAULT_TOKEN }}
         secrets: |
           secret/data/utility-scheduler oci-instance-20230319-1325-ssh-key | OCI_INSTANCE_20230319_1325_SSH_KEY ;
+          secret/data/utility-scheduler oci-instance-20230319-1325-ssh-public-key | OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY ;
           secret/data/utility-scheduler oci-instance-20230319-1325-host | OCI_INSTANCE_20230319_1325_HOST ;
           secret/data/utility-scheduler oci-instance-20230319-1325-user | OCI_INSTANCE_20230319_1325_USER
     - name: Configure ssh
       run: |
         mkdir -p ~/.ssh/
-        echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.key
-        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.key
+        echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
+        echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
+        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
         cat >>~/.ssh/config <<END
         Host OCI_INSTANCE_20230319_1325
           HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
           User ${{ env.OCI_INSTANCE_20230319_1325_USER }}
-          IdentityFile ~/.ssh/OCI_INSTANCE_20230319_1325.key
+          IdentityFile ~/.ssh/OCI_INSTANCE_20230319_1325
           StrictHostKeyChecking no
         END
     - name: Undeploy app
