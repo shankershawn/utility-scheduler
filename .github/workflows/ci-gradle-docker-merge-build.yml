@@ -72,21 +72,21 @@ jobs:
     - name: Configure ssh
       run: |
         mkdir -p ~/.ssh/
-        echo "${{ secrets.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.key
+        echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.key
         chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.key
         cat >>~/.ssh/config <<END
         Host OCI_INSTANCE_20230319_1325
-          HostName ${{ secrets.OCI_INSTANCE_20230319_1325_HOST }}
-          User ${{ secrets.OCI_INSTANCE_20230319_1325_USER }}
+          HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
+          User ${{ env.OCI_INSTANCE_20230319_1325_USER }}
           IdentityFile ~/.ssh/OCI_INSTANCE_20230319_1325.key
           StrictHostKeyChecking no
         END
     - name: Undeploy app
       run: |
-        ssh OCI_INSTANCE_20230319_1325 docker stop utility-scheduler
-        ssh OCI_INSTANCE_20230319_1325 docker rm utility-scheduler
+        ssh OCI_INSTANCE_20230319_1325 "docker stop utility-scheduler"
+        ssh OCI_INSTANCE_20230319_1325 "docker rm utility-scheduler"
     - name: Deploy app
       run: |
-        ssh OCI_INSTANCE_20230319_1325 docker pull shankershawn/utility-scheduler
-        ssh OCI_INSTANCE_20230319_1325 docker run -tid -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
+        ssh OCI_INSTANCE_20230319_1325 "docker pull shankershawn/utility-scheduler"
+        ssh OCI_INSTANCE_20230319_1325 "docker run -tid -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest"
       
