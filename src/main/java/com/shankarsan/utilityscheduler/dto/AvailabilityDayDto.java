@@ -26,11 +26,11 @@ public class AvailabilityDayDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AvailabilityDayDto that = (AvailabilityDayDto) o;
-        return availabilityDate.equals(that.availabilityDate);
+        return availabilityDate.equals(that.availabilityDate) && availabilityStatus.equals(that.availabilityStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(availabilityDate);
+        return Objects.hash(availabilityDate, availabilityStatus);
     }
 }
