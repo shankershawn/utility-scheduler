@@ -1,0 +1,103 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle and Docker - Merge Build and Non Prod Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Import Vault Secrets
+      uses: hashicorp/vault-action@v2
+      with:
+        url: http://144.24.128.195:8200
+        token: ${{ secrets.VAULT_TOKEN }}
+        secrets: |
+          secret/data/utility-scheduler docker-hub-token | DOCKER_HUB_TOKEN
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Docker Hub Login
+      uses: docker/login-action@v2
+      with:
+        username: shankershawn
+        password: ${{ env.DOCKER_HUB_TOKEN }}
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: clean build
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
+        push: true
+        tags: shankershawn/utility-scheduler:${{ github.sha }},shankershawn/utility-scheduler:latest
+  deploy:
+
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Import Vault Secrets
+        uses: hashicorp/vault-action@v2
+        with:
+          url: http://144.24.128.195:8200
+          token: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-key | OCI_INSTANCE_20230319_1325_SSH_KEY ;
+            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-public-key | OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY ;
+            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-passphrase | OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE ;
+            secret/data/utility-scheduler oci-instance-20230319-1325-host | OCI_INSTANCE_20230319_1325_HOST ;
+            secret/data/utility-scheduler oci-instance-20230319-1325-user | OCI_INSTANCE_20230319_1325_USER
+      - name: Configure ssh
+        run: |
+          apt-get update -y
+          apt-get install ssh -y
+          SSH_ASKPASS_SCRIPT=/askpass
+          cat > ${SSH_ASKPASS_SCRIPT} <<EOL
+          #!/bin/bash
+          echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}"
+          EOL
+          chmod u+x ${SSH_ASKPASS_SCRIPT}
+          export DISPLAY=:0
+          export SSH_ASKPASS=${SSH_ASKPASS_SCRIPT}
+          mkdir -p ~/.ssh/
+          echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
+          echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+          chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
+          chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+          cat >>~/.ssh/config <<END
+          Host OCI_INSTANCE_20230319_1325
+            HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
+            User ${{ env.OCI_INSTANCE_20230319_1325_USER }}
+            IdentityFile ~/.ssh/OCI_INSTANCE_20230319_1325
+            StrictHostKeyChecking no
+          END
+      - name: Undeploy app
+        run: |
+          setsid ssh OCI_INSTANCE_20230319_1325 "docker stop utility-scheduler && docker rm utility-scheduler" > /dev/null
+          sleep 30
+      - name: Deploy app
+        run: |
+          setsid ssh OCI_INSTANCE_20230319_1325 "docker pull shankershawn/utility-scheduler:latest && docker run -tid -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest" > /dev/null
