@@ -47,6 +47,8 @@ jobs:
         export DISPLAY=:0
         export SSH_ASKPASS=${SSH_ASKPASS_SCRIPT}
         
+        cat ${SSH_ASKPASS_SCRIPT}
+        
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.pub
         chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
