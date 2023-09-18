@@ -37,7 +37,8 @@ jobs:
       run: |
         sudo apt-get update -y
         sudo apt-get install ssh -y
-        SSH_ASKPASS_SCRIPT=/askpass
+        sudo mkdir -p ~/.ssh/
+        SSH_ASKPASS_SCRIPT=~/.ssh/askpass
         sudo cat > ${SSH_ASKPASS_SCRIPT} <<EOL
         #!/bin/bash
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}"
