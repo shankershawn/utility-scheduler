@@ -60,6 +60,7 @@ jobs:
         echo IdentityFile ~/.ssh/OCI_INSTANCE_20230319_1325 >> ~/.ssh/config
         echo StrictHostKeyChecking no >> ~/.ssh/config
         chmod 600 ~/.ssh/config
+        ls -lart ~/.ssh/
     - name: Undeploy app
       run: |
         setsid ssh OCI_INSTANCE_20230319_1325 "docker stop utility-scheduler && docker rm utility-scheduler" > /dev/null
