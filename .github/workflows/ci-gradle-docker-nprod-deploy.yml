@@ -38,19 +38,19 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install ssh -y
         SSH_ASKPASS_SCRIPT=/askpass
-        cat > ${SSH_ASKPASS_SCRIPT} <<EOL
+        sudo cat > ${SSH_ASKPASS_SCRIPT} <<EOL
         #!/bin/bash
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}"
         EOL
-        chmod u+x ${SSH_ASKPASS_SCRIPT}
+        sudo chmod u+x ${SSH_ASKPASS_SCRIPT}
         export DISPLAY=:0
         export SSH_ASKPASS=${SSH_ASKPASS_SCRIPT}
-        mkdir -p ~/.ssh/
+        sudo mkdir -p ~/.ssh/
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.pub
-        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
-        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
-        cat >>~/.ssh/config <<END
+        sudo chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
+        sudo chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+        sudo cat >>~/.ssh/config <<END
         Host OCI_INSTANCE_20230319_1325
           HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
           User ${{ env.OCI_INSTANCE_20230319_1325_USER }}
