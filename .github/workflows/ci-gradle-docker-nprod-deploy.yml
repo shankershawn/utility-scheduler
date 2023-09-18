@@ -44,7 +44,6 @@ jobs:
         chmod 777 ${SSH_ASKPASS_SCRIPT}
         echo \#\!/bin/bash > ${SSH_ASKPASS_SCRIPT}
         echo echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}" >> ${SSH_ASKPASS_SCRIPT}
-        cat 
         export DISPLAY=:0
         export SSH_ASKPASS=${SSH_ASKPASS_SCRIPT}
         
