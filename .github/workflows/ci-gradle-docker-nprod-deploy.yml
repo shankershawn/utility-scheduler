@@ -8,8 +8,10 @@
 name: Java CI with Gradle and Docker - Non Prod Deploy
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: [ "Java CI with Gradle and Docker - Merge Build" ]
+    types:
+      - completed
 
 permissions:
   contents: read
