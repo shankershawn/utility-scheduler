@@ -58,7 +58,7 @@ jobs:
         chmod 777 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
         
         touch ~/.ssh/config
-        chmod 777 ~/.ssh/config
+        chmod 600 ~/.ssh/config
         echo Host OCI_INSTANCE_20230319_1325 > ~/.ssh/config
         echo HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }} >> ~/.ssh/config
         echo User ${{ env.OCI_INSTANCE_20230319_1325_USER }} >> ~/.ssh/config
