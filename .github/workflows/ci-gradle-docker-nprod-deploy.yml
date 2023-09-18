@@ -35,8 +35,8 @@ jobs:
           secret/data/utility-scheduler oci-instance-20230319-1325-user | OCI_INSTANCE_20230319_1325_USER
     - name: Configure ssh
       run: |
-        apt-get update -y
-        apt-get install ssh -y
+        sudo apt-get update -y
+        sudo apt-get install ssh -y
         SSH_ASKPASS_SCRIPT=/askpass
         cat > ${SSH_ASKPASS_SCRIPT} <<EOL
         #!/bin/bash
