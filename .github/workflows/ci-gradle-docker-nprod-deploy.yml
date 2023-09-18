@@ -48,22 +48,17 @@ jobs:
         export DISPLAY=:0
         export SSH_ASKPASS=${SSH_ASKPASS_SCRIPT}
         
-        touch ~/.ssh/OCI_INSTANCE_20230319_1325
-        touch ~/.ssh/OCI_INSTANCE_20230319_1325.pub
-        chmod 777 ~/.ssh/OCI_INSTANCE_20230319_1325
-        chmod 777 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.pub
-        chmod 777 ~/.ssh/OCI_INSTANCE_20230319_1325
-        chmod 777 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
+        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
         
-        touch ~/.ssh/config
-        chmod 600 ~/.ssh/config
         echo Host OCI_INSTANCE_20230319_1325 > ~/.ssh/config
         echo HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }} >> ~/.ssh/config
         echo User ${{ env.OCI_INSTANCE_20230319_1325_USER }} >> ~/.ssh/config
         echo IdentityFile ~/.ssh/OCI_INSTANCE_20230319_1325 >> ~/.ssh/config
         echo StrictHostKeyChecking no >> ~/.ssh/config
+        chmod 600 ~/.ssh/config
     - name: Undeploy app
       run: |
         setsid ssh OCI_INSTANCE_20230319_1325 "docker stop utility-scheduler && docker rm utility-scheduler" > /dev/null
