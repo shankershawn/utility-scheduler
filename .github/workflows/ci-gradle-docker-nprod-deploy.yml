@@ -37,18 +37,28 @@ jobs:
       run: |
         sudo apt-get update -y
         sudo apt-get install ssh -y
-        sudo mkdir -p ~/.ssh/
+        
+        mkdir -p ~/.ssh/
         SSH_ASKPASS_SCRIPT=~/.ssh/askpass
-        sudo echo \#\!/bin/bash > ${SSH_ASKPASS_SCRIPT}
+        touch ${SSH_ASKPASS_SCRIPT}
+        chmod u+wx ${SSH_ASKPASS_SCRIPT}
+        echo \#\!/bin/bash > ${SSH_ASKPASS_SCRIPT}
         echo echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}" >> ${SSH_ASKPASS_SCRIPT}        
         sudo chmod u+x ${SSH_ASKPASS_SCRIPT}
         export DISPLAY=:0
         export SSH_ASKPASS=${SSH_ASKPASS_SCRIPT}
-        sudo mkdir -p ~/.ssh/
+        
+        touch ~/.ssh/OCI_INSTANCE_20230319_1325
+        touch ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+        chmod u+wx ~/.ssh/OCI_INSTANCE_20230319_1325
+        chmod u+wx ~/.ssh/OCI_INSTANCE_20230319_1325.pub
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
         echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325.pub
-        sudo chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
-        sudo chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
+        chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325.pub
+        
+        touch ~/.ssh/config
+        chmod u+wx ~/.ssh/config
         echo Host OCI_INSTANCE_20230319_1325 > ~/.ssh/config
         echo HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }} >> ~/.ssh/config
         echo User ${{ env.OCI_INSTANCE_20230319_1325_USER }} >> ~/.ssh/config
