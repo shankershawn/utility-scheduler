@@ -1,0 +1,55 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle and Docker - Merge Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Import Vault Secrets
+      uses: hashicorp/vault-action@v2
+      with:
+        url: http://144.24.128.195:8200
+        token: ${{ secrets.VAULT_TOKEN }}
+        secrets: |
+          secret/data/utility-scheduler docker-hub-token | DOCKER_HUB_TOKEN
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Docker Hub Login
+      uses: docker/login-action@v2
+      with:
+        username: shankershawn
+        password: ${{ env.DOCKER_HUB_TOKEN }}
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: clean build
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
+        push: true
+        tags: shankershawn/utility-scheduler:${{ github.sha }},shankershawn/utility-scheduler:latest
