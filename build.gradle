@@ -21,6 +21,14 @@ repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/milestone' }
 	maven { url 'https://repo.spring.io/snapshot' }
+	maven {
+		url "http://20.235.95.215:8000/repository/shankarsan-maven-repo/"
+		credentials {
+			username 'admin'
+			password 'Sun1!america'
+		}
+		allowInsecureProtocol true
+	}
 }
 
 ext {
@@ -35,8 +43,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'com.dropbox.core:dropbox-core-sdk:5.4.5'
 	implementation 'org.springframework.vault:spring-vault-core'
+	implementation 'com.shankarsan:dropbox-service:1.1-SNAPSHOT'
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'com.j2html:j2html:1.6.0'
 
