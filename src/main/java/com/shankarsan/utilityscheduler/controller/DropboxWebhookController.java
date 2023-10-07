@@ -1,6 +1,6 @@
 package com.shankarsan.utilityscheduler.controller;
 
-import com.shankarsan.utilityscheduler.service.DropboxWebhookService;
+import com.shankarsan.dropbox.service.DropboxWebhookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
