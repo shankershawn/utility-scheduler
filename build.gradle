@@ -2,13 +2,20 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.13-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'org.sonarqube' version '3.5.0.2730'
 }
 
 group = 'com.shankarsan'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0_' + System.getenv("GITHUB_VERSION")
 
 java {
 	sourceCompatibility = '11'
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "utility-scheduler"
+	}
 }
 
 configurations {
@@ -22,10 +29,10 @@ repositories {
 	maven { url 'https://repo.spring.io/milestone' }
 	maven { url 'https://repo.spring.io/snapshot' }
 	maven {
-		url "http://20.235.95.215:8000/repository/shankarsan-maven-repo/"
+		url System.getenv("ARTIFACTORY_URL")
 		credentials {
-			username 'admin'
-			password 'Sun1!america'
+			username System.getenv("ARTIFACTORY_USERNAME")
+			password System.getenv("ARTIFACTORY_PASSWORD")
 		}
 		allowInsecureProtocol true
 	}
@@ -44,10 +51,8 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.vault:spring-vault-core'
-	implementation 'com.shankarsan:dropbox-service:1.1+'
+	implementation 'com.shankarsan:dropbox-service:1.0.0+'
 	implementation 'com.j2html:j2html:1.6.0'
-
-
 
 	compileOnly 'org.projectlombok:lombok:1.18.26'
 	annotationProcessor 'org.projectlombok:lombok:1.18.26'
@@ -63,4 +68,25 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId 'com.shankarsan'
+			artifactId 'utility-scheduler'
+			version '1.0.0_' + System.getenv("GITHUB_VERSION")
+			from components.java
+		}
+	}
+	repositories {
+		maven {
+			url System.getenv("ARTIFACTORY_URL")
+			credentials {
+				username System.getenv("ARTIFACTORY_USERNAME")
+				password System.getenv("ARTIFACTORY_PASSWORD")
+			}
+			allowInsecureProtocol true
+		}
+	}
 }
