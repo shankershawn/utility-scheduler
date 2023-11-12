@@ -23,10 +23,15 @@ jobs:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v2
         with:
-          url: http://144.24.128.195:8200
+          url: ${{ secrets.VAULT_URL }}
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/data/utility-scheduler docker-hub-token | DOCKER_HUB_TOKEN
+            secret/data/com-shankarsan artifactory-url | ARTIFACTORY_URL ;
+            secret/data/com-shankarsan artifactory-username | ARTIFACTORY_USERNAME ;
+            secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
+            secret/data/com-shankarsan docker-hub-token | DOCKER_HUB_TOKEN ;
+            secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
+            secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -42,10 +47,35 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: clean build
+      - name: Sonarqube Scan
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        env:
+          GITHUB_VERSION: ${{ github.sha }}
+        with:
+          arguments: sonar
+      - name: Publish to Sonatype
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        env:
+          GITHUB_VERSION: ${{ github.sha }}
+        with:
+          arguments:
+            publish
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
