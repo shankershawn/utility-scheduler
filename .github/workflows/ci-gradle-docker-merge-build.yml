@@ -29,7 +29,9 @@ jobs:
             secret/data/com-shankarsan artifactory-url | ARTIFACTORY_URL ;
             secret/data/com-shankarsan artifactory-username | ARTIFACTORY_USERNAME ;
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
-            secret/data/com-shankarsan docker-hub-token | DOCKER_HUB_TOKEN
+            secret/data/com-shankarsan docker-hub-token | DOCKER_HUB_TOKEN ;
+            secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
+            secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
