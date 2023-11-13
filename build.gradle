@@ -30,10 +30,10 @@ repositories {
 	maven { url 'https://repo.spring.io/milestone' }
 	maven { url 'https://repo.spring.io/snapshot' }
 	maven {
-		url System.getenv("ARTIFACTORY_URL")
+		url = System.getenv("ARTIFACTORY_URL") ?: "${ARTIFACTORY_URL}"
 		credentials {
-			username System.getenv("ARTIFACTORY_USERNAME")
-			password System.getenv("ARTIFACTORY_PASSWORD")
+			username System.getenv("ARTIFACTORY_USERNAME") ?: "${ARTIFACTORY_USERNAME}"
+			password System.getenv("ARTIFACTORY_PASSWORD") ?: "${ARTIFACTORY_PASSWORD}"
 		}
 		allowInsecureProtocol true
 	}
@@ -82,10 +82,10 @@ publishing {
 	}
 	repositories {
 		maven {
-			url System.getenv("ARTIFACTORY_URL")
+			url = System.getenv("ARTIFACTORY_URL") ?: "${ARTIFACTORY_URL}"
 			credentials {
-				username System.getenv("ARTIFACTORY_USERNAME")
-				password System.getenv("ARTIFACTORY_PASSWORD")
+				username System.getenv("ARTIFACTORY_USERNAME") ?: "${ARTIFACTORY_USERNAME}"
+				password System.getenv("ARTIFACTORY_PASSWORD") ?: "${ARTIFACTORY_PASSWORD}"
 			}
 			allowInsecureProtocol true
 		}
