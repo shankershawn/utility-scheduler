@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -40,10 +41,22 @@ public class SeatAvailabilityInputStreamTransformer implements Function<InputStr
                             .fromDate(lineArray[5])
                             .toDate(lineArray[6])
                             .emailDtoList(getEmailDtoList(lineArray))
+                            .runDays(getRunDays(lineArray))
                             .build();
                 })
                 .filter(seatAvailabilityRequestDateFilter)
                 .collect(Collectors.toList());
+    }
+
+    private List<Integer> getRunDays(String[] lineArray) {
+        return Optional
+                .ofNullable(lineArray)
+                .map(lineArray1 -> lineArray1[10])
+                .map(lineArray2 -> lineArray2.split(""))
+                .map(lineArray3 -> Arrays.stream(lineArray3)
+                        .map(Integer::valueOf)
+                        .collect(Collectors.toList())
+                ).orElseThrow(() -> new IllegalStateException("Something went wrong in getRunDays"));
     }
 
     private List<EmailDto> getEmailDtoList(String[] lineArray) {
