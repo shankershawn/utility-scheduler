@@ -30,6 +30,7 @@ public class SeatAvailabilityRequestDto implements Serializable {
     private String toDate; //DD-MM-YYYY format
     private ClassCode classCode;
     private List<EmailDto> emailDtoList;
+    private List<Integer> runDays;
 
     public enum QuotaCode {
         GN, TQ, LD, SS
