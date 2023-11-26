@@ -9,6 +9,7 @@ public class CommonConstants {
     public static final String CRON_EXPRESSION = "cron-expression";
 
     public static final String IRCTC = "irctc";
+    public static final String CONFIRM_TKT = "confirmtkt";
 
     public static final String DROPBOX_CLIENT_SECRET = "dropbox-client-secret";
 

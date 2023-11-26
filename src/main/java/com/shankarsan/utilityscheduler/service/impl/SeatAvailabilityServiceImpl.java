@@ -8,7 +8,7 @@ import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import com.shankarsan.utilityscheduler.filter.SeatAvailabilityResponseDateFilter;
 import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;
-import com.shankarsan.utilityscheduler.service.IrctcService;
+import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
 import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityInputStreamTransformer;
 import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityRequestDateTransformer;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @EnableCaching
 public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
-    private final IrctcService irctcService;
+    private final SeatAvailabilityDataService seatAvailabilityDataService;
 
     private final DropboxWebhookService dropboxWebhookService;
 
@@ -63,7 +63,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .orElseGet(dropboxWebhookService::refreshAvailabilityFileData);
 
             seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
-                    .map(this::invokeIrctcService)
+                    .map(this::invokeSeatAvailabilityDataService)
                     .map(seatAvailabilityResponseFlattenTransformer)
                     .map(this::filterRepeatedAvailabilityDates)
                     .map(this::applySeatAvailabilityResponseDateFilter)
@@ -104,14 +104,14 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         return seatAvailabilityResponseDto;
     }
 
-    private List<SeatAvailabilityResponseDto> invokeIrctcService
+    private List<SeatAvailabilityResponseDto> invokeSeatAvailabilityDataService
             (SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
         final String originalFromDate = seatAvailabilityRequestDto.getFromDate();
         List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos = seatAvailabilityRequestDateTransformer
                 .apply(seatAvailabilityRequestDto).stream()
                 .map(date -> {
                     seatAvailabilityRequestDto.setFromDate(seatAvailabilityDateParser.format(date));
-                    SeatAvailabilityResponseDto seatAvailabilityResponseDto = irctcService
+                    SeatAvailabilityResponseDto seatAvailabilityResponseDto = seatAvailabilityDataService
                             .fetchAvailabilityData(seatAvailabilityRequestDto);
                     seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto);
                     return seatAvailabilityResponseDto;
