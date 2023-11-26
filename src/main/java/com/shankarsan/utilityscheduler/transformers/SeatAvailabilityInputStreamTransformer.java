@@ -51,7 +51,7 @@ public class SeatAvailabilityInputStreamTransformer implements Function<InputStr
     private List<Integer> getRunDays(String[] lineArray) {
         return Optional
                 .ofNullable(lineArray)
-                .map(lineArray1 -> lineArray1[9])
+                .map(lineArray1 -> lineArray1[10])
                 .map(lineArray2 -> lineArray2.split(""))
                 .map(lineArray3 -> Arrays.stream(lineArray3)
                         .map(Integer::valueOf)
