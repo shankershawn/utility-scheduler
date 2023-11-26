@@ -26,11 +26,18 @@ public class SeatAvailabilityRequestDto implements Serializable {
     private String fromStnCode;
     private String toStnCode;
     private final Boolean isLogedinReq = false;
-    private String fromDate; //DD-MM-YYYY format
-    private String toDate; //DD-MM-YYYY format
+    private String fromDate; //DD-MM-YYYY format for confirmtkt and YYYYMMDD for irctc
+    private String toDate; //DD-MM-YYYY format for confirmtkt and YYYYMMDD for irctc
+    private String journeyDate;
     private ClassCode classCode;
     private List<EmailDto> emailDtoList;
     private List<Integer> runDays;
+
+    public void setFromDate(String fromDate) {
+        String[] fromDateArr = fromDate.split("-");
+        this.fromDate = new StringBuilder(fromDateArr[2]).append(fromDateArr[1]).append(fromDateArr[0]).toString();
+        this.journeyDate = fromDate;
+    }
 
     public enum QuotaCode {
         GN, TQ, LD, SS

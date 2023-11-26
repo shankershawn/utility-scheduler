@@ -1,9 +1,11 @@
 package com.shankarsan.utilityscheduler.service.impl;
 
+import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
-import com.shankarsan.utilityscheduler.service.IrctcService;
+import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,10 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class IrctcServiceImpl implements IrctcService {
+@Profile(CommonConstants.CONFIRM_TKT)
+public class ConfirmTktSeatAvailabilityDataServiceImpl implements SeatAvailabilityDataService {
 
-    private final RestTemplate irctcRestTemplate;
+    private final RestTemplate confirmTktRestTemplate;
 
     @Override
     public SeatAvailabilityResponseDto fetchAvailabilityData(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
@@ -27,8 +30,8 @@ public class IrctcServiceImpl implements IrctcService {
                         seatAvailabilityRequestDto.getQuotaCode().name(),
                         seatAvailabilityRequestDto.getFromStnCode(),
                         seatAvailabilityRequestDto.getToStnCode(),
-                        seatAvailabilityRequestDto.getFromDate());
-        ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate.exchange(RequestEntity
+                        seatAvailabilityRequestDto.getJourneyDate());
+        ResponseEntity<SeatAvailabilityResponseDto> responseEntity = confirmTktRestTemplate.exchange(RequestEntity
                 .get(url).build(), SeatAvailabilityResponseDto.class);
         return responseEntity.getBody();
     }
