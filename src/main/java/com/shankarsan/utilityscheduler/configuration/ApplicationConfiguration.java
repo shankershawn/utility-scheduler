@@ -27,6 +27,8 @@ public class ApplicationConfiguration {
 
     private Boolean mailFlag;
 
+    private long apiCallIntervalMillis;
+
     public String getCronExpression(Map<String, String> configMap) {
         return configMap.get(CommonConstants.CRON_EXPRESSION);
     }

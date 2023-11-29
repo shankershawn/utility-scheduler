@@ -1,10 +1,12 @@
 package com.shankarsan.utilityscheduler.service.impl;
 
+import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
@@ -17,9 +19,12 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Profile(CommonConstants.IRCTC)
+@Slf4j
 public class IrctcSeatAvailabilityDataServiceImpl implements SeatAvailabilityDataService {
 
     private final RestTemplate irctcRestTemplate;
+
+    private final ApplicationConfiguration applicationConfiguration;
 
     @Override
     public SeatAvailabilityResponseDto fetchAvailabilityData(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
@@ -48,6 +53,12 @@ public class IrctcSeatAvailabilityDataServiceImpl implements SeatAvailabilityDat
         ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate
                 .exchange(RequestEntity.<SeatAvailabilityRequestDto>post(url).headers(httpHeaders).body(seatAvailabilityRequestDto),
                         SeatAvailabilityResponseDto.class);
+        try {
+            Thread.sleep(applicationConfiguration.getApiCallIntervalMillis());
+        } catch (InterruptedException e) {
+            log.error("Sleep failed", e);
+            throw new IllegalStateException(e);
+        }
         return responseEntity.getBody();
     }
 }
