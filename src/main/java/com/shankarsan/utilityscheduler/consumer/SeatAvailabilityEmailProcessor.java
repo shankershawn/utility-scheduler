@@ -106,7 +106,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
         Cache cache = cacheManager.getCache(CommonConstants.AVAILABILITY_CACHE);
         SeatAvailabilityRequestDto seatAvailabilityRequestDto = Optional.ofNullable(seatAvailabilityResponseDto)
                 .map(SeatAvailabilityResponseDto::getSeatAvailabilityRequestDto)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid seatAvailabilityRequestDto"));
+                .orElseThrow(() -> new IllegalStateException("Invalid seatAvailabilityRequestDto"));
         Optional.ofNullable(cache)
                 .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityRequestDto)))
                 .map(Cache.ValueWrapper::get)
@@ -179,7 +179,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
         seatAvailabilityResponseDto.setMailSubject(subjectBuilder.append("Availability for ")
                 .append(seatAvailabilityRequestDto.getTrainNumber())
                 .append(" ").append(seatAvailabilityResponseDto.getTrainName())
-                .append(" on ").append(seatAvailabilityRequestDto.getFromDate())
+                .append(" on ").append(seatAvailabilityRequestDto.getJourneyDate())
                 .append(" to ").append(seatAvailabilityRequestDto.getToDate())
                 .append(" from ").append(seatAvailabilityRequestDto.getFromStnCode())
                 .append(" to ").append(seatAvailabilityRequestDto.getToStnCode())
