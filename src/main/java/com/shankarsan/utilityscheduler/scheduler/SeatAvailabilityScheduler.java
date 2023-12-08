@@ -1,12 +1,14 @@
 package com.shankarsan.utilityscheduler.scheduler;
 
 import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
+import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.CronTask;
@@ -17,6 +19,7 @@ import org.springframework.scheduling.support.CronTrigger;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+@Profile(CommonConstants.SCHEDULER)
 public class SeatAvailabilityScheduler implements SchedulingConfigurer {
 
     private final ApplicationConfiguration applicationConfiguration;
@@ -33,6 +36,7 @@ public class SeatAvailabilityScheduler implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        log.info("Configuring scheduled task");
         taskRegistrar.addCronTask(new CronTask(seatAvailabilityService::processSeatAvailability,
                 cronTrigger()));
     }
