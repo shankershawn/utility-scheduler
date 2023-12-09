@@ -29,6 +29,8 @@ jobs:
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
             secret/data/utility-scheduler oci-instance-20230319-1325-ssh-key | OCI_INSTANCE_20230319_1325_SSH_KEY ;
+            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-public-key | OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY ;
+            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-passphrase | OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE ;
             secret/data/utility-scheduler oci-instance-20230319-1325-host | OCI_INSTANCE_20230319_1325_HOST ;
             secret/data/utility-scheduler oci-instance-20230319-1325-user | OCI_INSTANCE_20230319_1325_USER
 #      - name: Configure ssh
