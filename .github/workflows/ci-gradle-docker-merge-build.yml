@@ -71,13 +71,13 @@ jobs:
 #          GITHUB_VERSION: ${{ github.sha }}
 #        with:
 #          arguments: sonar
-      - name: Publish to Sonatype
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        env:
-          GITHUB_VERSION: ${{ github.sha }}
-        with:
-          arguments:
-            publish
+#      - name: Publish to Sonatype
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        env:
+#          GITHUB_VERSION: ${{ github.sha }}
+#        with:
+#          arguments:
+#            publish
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
