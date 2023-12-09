@@ -29,7 +29,6 @@ jobs:
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
             secret/data/utility-scheduler oci-instance-20230319-1325-ssh-key | OCI_INSTANCE_20230319_1325_SSH_KEY ;
-            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-public-key | OCI_INSTANCE_20230319_1325_SSH_PUBLIC_KEY ;
             secret/data/utility-scheduler oci-instance-20230319-1325-ssh-passphrase | OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE ;
             secret/data/utility-scheduler oci-instance-20230319-1325-host | OCI_INSTANCE_20230319_1325_HOST ;
             secret/data/utility-scheduler oci-instance-20230319-1325-user | OCI_INSTANCE_20230319_1325_USER
@@ -72,6 +71,7 @@ jobs:
           host: ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
           username: ${{ env.OCI_INSTANCE_20230319_1325_USER }}
           key: ${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}
+          passphrase: ${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}
           script: |
             docker pull shankershawn/utility-scheduler:latest
             docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,confirmtkt,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
