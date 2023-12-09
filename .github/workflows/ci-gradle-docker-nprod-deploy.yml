@@ -62,6 +62,7 @@ jobs:
           host: ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
           username: ${{ env.OCI_INSTANCE_20230319_1325_USER }}
           key: ${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}
+          passphrase: ${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}
           script: |
             docker stop utility-scheduler
             docker rm utility-scheduler
