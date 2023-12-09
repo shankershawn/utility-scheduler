@@ -29,6 +29,13 @@ public class ApplicationConfiguration {
 
     private long apiCallIntervalMillis;
 
+    private int corePoolSize;
+
+    private int maximumPoolSize;
+
+    private long keepAliveTimeMillis;
+
+
     public String getCronExpression(Map<String, String> configMap) {
         return configMap.get(CommonConstants.CRON_EXPRESSION);
     }

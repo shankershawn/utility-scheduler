@@ -11,20 +11,25 @@ import java.util.Date;
 @Slf4j
 public class SeatAvailabilityDateParser {
 
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private final ThreadLocal<SimpleDateFormat> simpleDateFormatThreadLocal =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("dd-MM-yyyy"));
 
     public Date parse(String dateString) {
         Date date = null;
         try {
-            date = simpleDateFormat.parse(dateString);
+            date = simpleDateFormatThreadLocal.get().parse(dateString);
         } catch (ParseException pe) {
             log.error("Exception while parsing date", pe);
+        } catch (NumberFormatException pe) {
+            log.error("NumberFormatException", pe);
+        } finally {
+            simpleDateFormatThreadLocal.remove();
         }
         return date;
     }
 
     public String format(Date date) {
-        return simpleDateFormat.format(date);
+        return simpleDateFormatThreadLocal.get().format(date);
     }
 
 }
