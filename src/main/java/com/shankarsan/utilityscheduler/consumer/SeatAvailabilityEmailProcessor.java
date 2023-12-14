@@ -111,41 +111,50 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                 .map(cache1 -> cache1.get(getCacheKey(seatAvailabilityRequestDto)))
                 .map(Cache.ValueWrapper::get)
                 .map(e -> ((SeatAvailabilityResponseDto) e).getAvlDayList())
-                .ifPresentOrElse(cachedAvailabilityData ->
-                        Optional.of(seatAvailabilityResponseDto)
-                                .map(SeatAvailabilityResponseDto::getAvlDayList)
-                                .filter(Predicate.not(List::isEmpty))
-                                .ifPresent(fetchedAvailabilityData -> {
-                                    if (!cachedAvailabilityData.equals(fetchedAvailabilityData)) {
-                                        log.debug("Data changed:::Setting cache and sending email {}",
-                                                seatAvailabilityResponseDto);
-                                        Optional.ofNullable(cache)
-                                                .ifPresent((cache1 -> cache1
-                                                        .put(getCacheKey(seatAvailabilityResponseDto
-                                                                        .getSeatAvailabilityRequestDto()),
-                                                                seatAvailabilityResponseDto)));
-                                        setMailParams(seatAvailabilityResponseDto
-                                                        .getSeatAvailabilityRequestDto(), seatAvailabilityResponseDto,
-                                                Boolean.TRUE);
-                                    }
-                                }), () ->
-                        Optional.of(seatAvailabilityResponseDto)
-                                .map(SeatAvailabilityResponseDto::getAvlDayList)
-                                .filter(Predicate.not(List::isEmpty))
-                                .ifPresent(availabilityDayDtos -> {
-                                    log.debug("Availability data not found in cache:::" +
-                                                    "Setting cache and sending email {}",
-                                            seatAvailabilityResponseDto);
-                                    Optional.ofNullable(cache)
-                                            .ifPresent((cache1 -> cache1
-                                                    .put(getCacheKey(seatAvailabilityResponseDto
-                                                                    .getSeatAvailabilityRequestDto()),
-                                                            seatAvailabilityResponseDto)));
-                                    setMailParams(seatAvailabilityResponseDto
-                                                    .getSeatAvailabilityRequestDto(),
-                                            seatAvailabilityResponseDto, Boolean.FALSE);
-                                })
+                .ifPresentOrElse(cachedAvailabilityData -> checkAndProcessCachedAvailabilityData(
+                                seatAvailabilityResponseDto, cache, cachedAvailabilityData),
+                        () -> setCache(seatAvailabilityResponseDto, cache)
                 );
+    }
+
+    private void setCache(SeatAvailabilityResponseDto seatAvailabilityResponseDto, Cache cache) {
+        Optional.of(seatAvailabilityResponseDto)
+                .map(SeatAvailabilityResponseDto::getAvlDayList)
+                .filter(Predicate.not(List::isEmpty))
+                .ifPresent(availabilityDayDtos -> {
+                    log.debug("Availability data not found in cache:::" +
+                                    "Setting cache and sending email {}",
+                            seatAvailabilityResponseDto);
+                    Optional.ofNullable(cache)
+                            .ifPresent((cache1 -> cache1
+                                    .put(getCacheKey(seatAvailabilityResponseDto
+                                                    .getSeatAvailabilityRequestDto()),
+                                            seatAvailabilityResponseDto)));
+                    setMailParams(seatAvailabilityResponseDto
+                                    .getSeatAvailabilityRequestDto(),
+                            seatAvailabilityResponseDto, Boolean.FALSE);
+                });
+    }
+
+    private void checkAndProcessCachedAvailabilityData(SeatAvailabilityResponseDto seatAvailabilityResponseDto,
+                                                       Cache cache, List<AvailabilityDayDto> cachedAvailabilityData) {
+        Optional.of(seatAvailabilityResponseDto)
+                .map(SeatAvailabilityResponseDto::getAvlDayList)
+                .filter(Predicate.not(List::isEmpty))
+                .ifPresent(fetchedAvailabilityData -> {
+                    if (!cachedAvailabilityData.equals(fetchedAvailabilityData)) {
+                        log.debug("Data changed:::Setting cache and sending email {}",
+                                seatAvailabilityResponseDto);
+                        Optional.ofNullable(cache)
+                                .ifPresent((cache1 -> cache1
+                                        .put(getCacheKey(seatAvailabilityResponseDto
+                                                        .getSeatAvailabilityRequestDto()),
+                                                seatAvailabilityResponseDto)));
+                        setMailParams(seatAvailabilityResponseDto
+                                        .getSeatAvailabilityRequestDto(), seatAvailabilityResponseDto,
+                                Boolean.TRUE);
+                    }
+                });
     }
 
     private String getCacheKey(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
@@ -167,7 +176,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
     }
 
     private void setMailParams(SeatAvailabilityRequestDto seatAvailabilityRequestDto,
-                                      SeatAvailabilityResponseDto seatAvailabilityResponseDto, boolean replyFlag) {
+                               SeatAvailabilityResponseDto seatAvailabilityResponseDto, boolean replyFlag) {
         StringBuilder subjectBuilder;
         if (replyFlag) {
             subjectBuilder = new StringBuilder("Re: ");
