@@ -166,7 +166,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                 .orElseThrow(() -> new IllegalArgumentException("Invalid seatAvailabilityRequestDto"));
     }
 
-    private static void setMailParams(SeatAvailabilityRequestDto seatAvailabilityRequestDto,
+    private void setMailParams(SeatAvailabilityRequestDto seatAvailabilityRequestDto,
                                       SeatAvailabilityResponseDto seatAvailabilityResponseDto, boolean replyFlag) {
         StringBuilder subjectBuilder;
         if (replyFlag) {
