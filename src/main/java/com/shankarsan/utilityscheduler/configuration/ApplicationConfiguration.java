@@ -37,7 +37,7 @@ public class ApplicationConfiguration {
 
 
     public String getCronExpression(Map<String, String> configMap) {
-        return configMap.get(CommonConstants.CRON_EXPRESSION);
+        return extractFromMap(configMap, CommonConstants.CRON_EXPRESSION);
     }
 
     public String getUrl(String key) {
