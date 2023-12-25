@@ -126,10 +126,10 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                     "Setting cache and sending email {}",
                             seatAvailabilityResponseDto);
                     Optional.ofNullable(cache)
-                            .ifPresent((cache1 -> cache1
+                            .ifPresent(cache1 -> cache1
                                     .put(getCacheKey(seatAvailabilityResponseDto
                                                     .getSeatAvailabilityRequestDto()),
-                                            seatAvailabilityResponseDto)));
+                                            seatAvailabilityResponseDto));
                     setMailParams(seatAvailabilityResponseDto
                                     .getSeatAvailabilityRequestDto(),
                             seatAvailabilityResponseDto, Boolean.FALSE);

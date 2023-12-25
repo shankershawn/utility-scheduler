@@ -1,12 +1,18 @@
 package com.shankarsan.utilityscheduler.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AvailabilityDayDto implements Serializable {
 
     private static final long serialVersionUID = -3L;
