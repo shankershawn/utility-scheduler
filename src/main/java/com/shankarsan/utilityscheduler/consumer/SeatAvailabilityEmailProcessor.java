@@ -1,5 +1,6 @@
 package com.shankarsan.utilityscheduler.consumer;
 
+import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
@@ -33,6 +34,8 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
 
     @Qualifier("html")
     private final MailService mailService;
+
+    private final ApplicationConfiguration applicationConfiguration;
 
     @Override
     public void accept(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
@@ -99,7 +102,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
     private void processMailEligibility(final SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         Optional<String> errorMessageOptional = Optional.ofNullable(seatAvailabilityResponseDto)
                 .map(SeatAvailabilityResponseDto::getErrorMessage);
-        if (errorMessageOptional.isPresent()) {
+        if (errorMessageOptional.isPresent() && !isAllowedErrorCode(errorMessageOptional)) {
             log.debug("Error message found: {}. Returning", errorMessageOptional.get());
             return;
         }
@@ -115,6 +118,12 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                 seatAvailabilityResponseDto, cache, cachedAvailabilityData),
                         () -> setCache(seatAvailabilityResponseDto, cache)
                 );
+    }
+
+    private boolean isAllowedErrorCode(Optional<String> errorMessageOptional) {
+        return errorMessageOptional.isPresent() && applicationConfiguration.getAllowedErrorCodes().stream()
+                .anyMatch(allowedErrorCode -> errorMessageOptional.get().contains(allowedErrorCode));
+
     }
 
     private void setCache(SeatAvailabilityResponseDto seatAvailabilityResponseDto, Cache cache) {
