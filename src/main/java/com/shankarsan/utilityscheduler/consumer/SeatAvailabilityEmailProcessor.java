@@ -29,9 +29,15 @@ import java.util.stream.Collectors;
 public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailabilityResponseDto> {
 
     public static final String STYLE = "style";
+    public static final String TD = "td";
+    public static final String TR = "tr";
+    public static final String TH = "th";
+    public static final String TABLE = "table";
+    public static final String BODY = "body";
+    public static final String HTML = "html";
     private final CacheManager cacheManager;
 
-    @Qualifier("html")
+    @Qualifier(HTML)
     private final MailService mailService;
 
     @Override
@@ -44,23 +50,23 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
         FlatHtml<StringBuilder> stringBuilderFlatHtml = FlatHtml.inMemory();
         try {
             TagBuilder rowBuilder;
-            stringBuilderFlatHtml.appendStartTag("html").completeTag();
-            stringBuilderFlatHtml.appendStartTag("body").completeTag();
-            stringBuilderFlatHtml.appendStartTag("table")
+            stringBuilderFlatHtml.appendStartTag(HTML).completeTag();
+            stringBuilderFlatHtml.appendStartTag(BODY).completeTag();
+            stringBuilderFlatHtml.appendStartTag(TABLE)
                     .appendAttribute(STYLE, "border: 1px solid black;")
                     .completeTag();
-            stringBuilderFlatHtml.appendStartTag("tr")
+            stringBuilderFlatHtml.appendStartTag(TR)
                     .appendAttribute(STYLE, "background-color: #F7C8E0;")
                     .completeTag();
-            stringBuilderFlatHtml.appendStartTag("th").completeTag();
+            stringBuilderFlatHtml.appendStartTag(TH).completeTag();
             stringBuilderFlatHtml.appendUnescapedText("Date");
-            stringBuilderFlatHtml.appendEndTag("th");
-            stringBuilderFlatHtml.appendStartTag("th").completeTag();
+            stringBuilderFlatHtml.appendEndTag(TH);
+            stringBuilderFlatHtml.appendStartTag(TH).completeTag();
             stringBuilderFlatHtml.appendUnescapedText("Availability");
-            stringBuilderFlatHtml.appendEndTag("th");
-            stringBuilderFlatHtml.appendEndTag("tr");
+            stringBuilderFlatHtml.appendEndTag(TH);
+            stringBuilderFlatHtml.appendEndTag(TR);
             for (AvailabilityDayDto availabilityDayDto : availabilityDayDtos) {
-                rowBuilder = stringBuilderFlatHtml.appendStartTag("tr");
+                rowBuilder = stringBuilderFlatHtml.appendStartTag(TR);
                 if (availabilityDayDto.getAvailabilityStatus().contains("AVAILABLE")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #B9F3E4;");
                 } else if (availabilityDayDto.getAvailabilityStatus().contains("RAC")) {
@@ -69,17 +75,17 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                     rowBuilder.appendAttribute(STYLE, "background-color: #FF9B9B;");
                 }
                 rowBuilder.completeTag();
-                stringBuilderFlatHtml.appendStartTag("td").completeTag();
+                stringBuilderFlatHtml.appendStartTag(TD).completeTag();
                 stringBuilderFlatHtml.appendUnescapedText(availabilityDayDto.getAvailabilityDate());
-                stringBuilderFlatHtml.appendEndTag("td");
-                stringBuilderFlatHtml.appendStartTag("td").completeTag();
+                stringBuilderFlatHtml.appendEndTag(TD);
+                stringBuilderFlatHtml.appendStartTag(TD).completeTag();
                 stringBuilderFlatHtml.appendUnescapedText(availabilityDayDto.getAvailabilityStatus());
-                stringBuilderFlatHtml.appendEndTag("td");
-                stringBuilderFlatHtml.appendEndTag("tr");
+                stringBuilderFlatHtml.appendEndTag(TD);
+                stringBuilderFlatHtml.appendEndTag(TR);
             }
-            stringBuilderFlatHtml.appendEndTag("table");
-            stringBuilderFlatHtml.appendEndTag("body");
-            stringBuilderFlatHtml.appendEndTag("html");
+            stringBuilderFlatHtml.appendEndTag(TABLE);
+            stringBuilderFlatHtml.appendEndTag(BODY);
+            stringBuilderFlatHtml.appendEndTag(HTML);
         } catch (IOException e) {
             throw new ApplicationException(e);
         }
