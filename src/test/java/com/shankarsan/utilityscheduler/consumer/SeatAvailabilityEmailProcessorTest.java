@@ -102,7 +102,6 @@ class SeatAvailabilityEmailProcessorTest {
                 getSeatAvailabilityResponseDto();
         seatAvailabilityResponseDto.setErrorMessage("Some error");
 
-        System.out.println(seatAvailabilityEmailProcessor);
         Stream.of(seatAvailabilityResponseDto).forEach(seatAvailabilityEmailProcessor);
 
         verify(cacheManager, times(0)).getCache(anyString());
