@@ -101,7 +101,9 @@ class SeatAvailabilityEmailProcessorTest {
         SeatAvailabilityResponseDto seatAvailabilityResponseDto =
                 getSeatAvailabilityResponseDto();
         seatAvailabilityResponseDto.setErrorMessage("Some error");
-
+        if (seatAvailabilityEmailProcessor == null) {
+            System.out.println("seatAvailabilityEmailProcessor is null");
+        }
         Stream.of(seatAvailabilityResponseDto).forEach(seatAvailabilityEmailProcessor);
 
         verify(cacheManager, times(0)).getCache(anyString());
