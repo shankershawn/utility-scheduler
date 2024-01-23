@@ -1,5 +1,6 @@
 package com.shankarsan.utilityscheduler.consumer;
 
+import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
@@ -35,6 +36,9 @@ class SeatAvailabilityEmailProcessorTest {
 
     @Mock
     private MailService mailService;
+
+    @Mock
+    private ApplicationConfiguration applicationConfiguration;
 
     @InjectMocks
     private SeatAvailabilityEmailProcessor seatAvailabilityEmailProcessor;
@@ -100,7 +104,9 @@ class SeatAvailabilityEmailProcessorTest {
     void shouldNotSendMailForErrorMessageInSeatAvailabilityResponseDto() {
         SeatAvailabilityResponseDto seatAvailabilityResponseDto =
                 getSeatAvailabilityResponseDto();
-        seatAvailabilityResponseDto.setErrorMessage("Some error");
+        seatAvailabilityResponseDto.setErrorMessage("8000 Some error");
+
+        when(applicationConfiguration.getAllowedErrorCodes()).thenReturn(List.of("8001"));
 
         Stream.of(seatAvailabilityResponseDto).forEach(seatAvailabilityEmailProcessor);
 
