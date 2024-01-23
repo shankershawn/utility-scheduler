@@ -28,15 +28,14 @@ public class SeatAvailabilityRequestDateTransformer implements Function<SeatAvai
                     while (!calendar.getTime().after(seatAvailabilityDateParser
                             .parse(Optional.ofNullable(seatAvailabilityRequestDto.getToDate())
                                     .orElseThrow(() -> new IllegalArgumentException("Invalid To Date"))))) {
-                        callDates.add(calendar.getTime());
-                        calendar.add(Calendar.DATE, 6);
-
                         // Below section validates if the calculated train run date is a valid train run date.
                         // If not, then date is incremented by 1 day until a valid train run date is found
                         while (!seatAvailabilityRequestDto.getRunDays()
                                 .contains(calendar.get(Calendar.DAY_OF_WEEK))) {
                             calendar.add(Calendar.DATE, 1);
                         }
+                        callDates.add(calendar.getTime());
+                        calendar.add(Calendar.DATE, 6);
                     }
                     return callDates;
                 })
