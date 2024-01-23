@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,6 +35,8 @@ public class ApplicationConfiguration {
     private int maximumPoolSize;
 
     private long keepAliveTimeMillis;
+
+    private List<String> allowedErrorCodes;
 
 
     public String getCronExpression(Map<String, String> configMap) {

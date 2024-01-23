@@ -2,14 +2,12 @@ package com.shankarsan.utilityscheduler.controller;
 
 import com.shankarsan.dropbox.service.DropboxWebhookService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/v1/dropbox")
 @EnableCaching
