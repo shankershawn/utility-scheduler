@@ -15,8 +15,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.SimpleValueWrapper;
@@ -31,8 +29,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SeatAvailabilityEmailProcessorTest {
-
-    private final Logger logger = LoggerFactory.getLogger(SeatAvailabilityEmailProcessorTest.class);
 
     @Mock
     private CacheManager cacheManager;
@@ -106,8 +102,6 @@ class SeatAvailabilityEmailProcessorTest {
                 getSeatAvailabilityResponseDto();
         seatAvailabilityResponseDto.setErrorMessage("Some error");
 
-        logger.info("seatAvailabilityResponseDto is {}", seatAvailabilityResponseDto);
-        logger.info("seatAvailabilityEmailProcessor is {}", seatAvailabilityEmailProcessor);
         Stream.of(seatAvailabilityResponseDto).forEach(seatAvailabilityEmailProcessor);
 
         verify(cacheManager, times(0)).getCache(anyString());
