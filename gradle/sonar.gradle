@@ -1,0 +1,9 @@
+sonar {
+    properties {
+        property("sonar.projectKey", "utility-scheduler")
+        property("sonar.host.url", "http://144.24.128.195:9000")
+        property("sonar.qualitygate.wait", true)
+        property("sonar.qualitygate.timeout", 1800)
+
+    }
+}
