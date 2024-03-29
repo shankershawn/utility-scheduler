@@ -21,10 +21,10 @@ public class ConfirmTktSeatAvailabilityDataServiceImpl implements SeatAvailabili
     @Override
     public SeatAvailabilityResponseDto fetchAvailabilityData(SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
         String url = String
-                .format("/api/platform/trainbooking/avlFareenquiry?trainNo=%s&travelClass=%s&quota=%s&fromStnCode=%s" +
-                                "&destStnCode=%s&doj=%s" +
-                                "&token=204F97FDBEBA275624E386BD688AE83E94E87D37364787DC5AD51D3C05E47F58" +
-                                "&planZeroCan=RO-E1",
+                .format("/api/platform/trainbooking/avlFareenquiry?trainNo=%s&travelClass=%s&quota=%s&fromStnCode=%s"
+                                + "&destStnCode=%s&doj=%s"
+                                + "&token=204F97FDBEBA275624E386BD688AE83E94E87D37364787DC5AD51D3C05E47F58"
+                                + "&planZeroCan=RO-E1",
                         seatAvailabilityRequestDto.getTrainNumber(),
                         seatAvailabilityRequestDto.getClassCode().getName(),
                         seatAvailabilityRequestDto.getQuotaCode().name(),

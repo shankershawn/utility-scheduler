@@ -63,8 +63,8 @@ public class SeatAvailabilityResponseFlattenTransformer implements
                 .build();
     }
 
-    private Optional<Stream<SeatAvailabilityResponseDto>> getOptionalWithNewStream
-            (List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos) {
+    private Optional<Stream<SeatAvailabilityResponseDto>> getOptionalWithNewStream(
+            List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos) {
         return Optional
                 .ofNullable(seatAvailabilityResponseDtos)
                 .map(Collection::stream);

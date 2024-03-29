@@ -29,8 +29,12 @@ public class AvailabilityDayDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AvailabilityDayDto that = (AvailabilityDayDto) o;
         return availabilityDate.equals(that.availabilityDate) && availabilityStatus.equals(that.availabilityStatus);
     }

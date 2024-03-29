@@ -5,6 +5,7 @@ plugins {
 	id 'maven-publish'
 	id 'org.sonarqube' version '3.5.0.2730'
 	id 'jacoco'
+	id 'checkstyle'
 }
 
 group = 'com.shankarsan'
@@ -16,6 +17,7 @@ java {
 
 apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/coverage.gradle'
+apply from: 'gradle/checkstyle.gradle'
 
 configurations {
 	compileOnly {

@@ -19,8 +19,8 @@ public class SeatAvailabilityResponseDateFilter {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
-    public Predicate<AvailabilityDayDto> getAvailabilityDayDtoPredicate
-            (SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+    public Predicate<AvailabilityDayDto> getAvailabilityDayDtoPredicate(
+            SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         return availabilityDayDto -> {
             Date requestToDate = Optional.ofNullable(seatAvailabilityResponseDto)
                     .map(SeatAvailabilityResponseDto::getSeatAvailabilityRequestDto)
