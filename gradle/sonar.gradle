@@ -1,4 +1,4 @@
-coverageExclusions = [
+def coverageExclusions = [
         "**/constants/*",
         "**/dto/*",
         "**/exception/*"
