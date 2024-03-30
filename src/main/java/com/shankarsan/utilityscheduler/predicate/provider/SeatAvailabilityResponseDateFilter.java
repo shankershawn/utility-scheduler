@@ -1,4 +1,4 @@
-package com.shankarsan.utilityscheduler.filter;
+package com.shankarsan.utilityscheduler.predicate.provider;
 
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;

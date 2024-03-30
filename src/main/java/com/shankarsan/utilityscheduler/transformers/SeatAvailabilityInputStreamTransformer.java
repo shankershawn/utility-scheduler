@@ -3,7 +3,7 @@ package com.shankarsan.utilityscheduler.transformers;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
-import com.shankarsan.utilityscheduler.filter.SeatAvailabilityRequestDateFilter;
+import com.shankarsan.utilityscheduler.predicate.SeatAvailabilityRequestDateFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
