@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
-public class SeatAvailabilityRequestDateFilter implements Predicate<SeatAvailabilityRequestDto> {
+public class SeatAvailabilityRequestDatePredicate implements Predicate<SeatAvailabilityRequestDto> {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 

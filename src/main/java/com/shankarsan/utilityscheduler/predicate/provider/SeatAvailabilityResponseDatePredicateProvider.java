@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SeatAvailabilityResponseDateFilter {
+public class SeatAvailabilityResponseDatePredicateProvider {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 

@@ -3,7 +3,6 @@ package com.shankarsan.utilityscheduler.transformers;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
-import com.shankarsan.utilityscheduler.predicate.SeatAvailabilityRequestDateFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,8 +23,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SeatAvailabilityInputStreamTransformer implements Function<InputStream, List<SeatAvailabilityRequestDto>> {
 
-    private final SeatAvailabilityRequestDateFilter seatAvailabilityRequestDateFilter;
-
     @Override
     public List<SeatAvailabilityRequestDto> apply(InputStream inputStream) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -44,7 +41,6 @@ public class SeatAvailabilityInputStreamTransformer implements Function<InputStr
                             .runDays(getRunDays(lineArray))
                             .build();
                 })
-                .filter(seatAvailabilityRequestDateFilter)
                 .collect(Collectors.toList());
     }
 
