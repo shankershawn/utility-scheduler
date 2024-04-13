@@ -70,7 +70,7 @@ jobs:
         env:
           GITHUB_VERSION: ${{ github.sha }}
         with:
-          arguments: sonar
+          arguments: sonar --stacktrace
       - name: Publish to Sonatype
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         env:
