@@ -6,10 +6,12 @@ def coverageExclusions = [
 
 sonar {
     properties {
+        //sonar.host.url and sonar.token are obtained from vault
         property("sonar.projectKey", "utility-scheduler")
         property("sonar.qualitygate.wait", true)
         property("sonar.qualitygate.timeout", 1800)
         property("sonar.coverage.exclusions", coverageExclusions)
+        property("sonar.scm.disabled", true)
 
     }
 }
