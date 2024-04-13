@@ -19,7 +19,7 @@ permissions:
 jobs:
   deploy:
 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     
     steps:
       - name: Import Vault Secrets
