@@ -7,7 +7,6 @@ def coverageExclusions = [
 sonar {
     properties {
         property("sonar.projectKey", "utility-scheduler")
-        property("sonar.host.url", "http://192.168.0.102:9000")
         property("sonar.qualitygate.wait", true)
         property("sonar.qualitygate.timeout", 1800)
         property("sonar.coverage.exclusions", coverageExclusions)
