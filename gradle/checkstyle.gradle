@@ -1,0 +1,3 @@
+test {
+    finalizedBy checkstyleMain, checkstyleTest // report is always generated after tests run
+}

@@ -1,4 +1,4 @@
-package com.shankarsan.utilityscheduler.filter;
+package com.shankarsan.utilityscheduler.predicate.provider;
 
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
@@ -15,12 +15,12 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SeatAvailabilityResponseDateFilter {
+public class SeatAvailabilityResponseDatePredicateProvider {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
-    public Predicate<AvailabilityDayDto> getAvailabilityDayDtoPredicate
-            (SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+    public Predicate<AvailabilityDayDto> getAvailabilityDayDtoPredicate(
+            SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         return availabilityDayDto -> {
             Date requestToDate = Optional.ofNullable(seatAvailabilityResponseDto)
                     .map(SeatAvailabilityResponseDto::getSeatAvailabilityRequestDto)

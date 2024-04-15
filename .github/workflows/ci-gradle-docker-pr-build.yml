@@ -60,4 +60,4 @@ jobs:
         env:
           GITHUB_VERSION: ${{ github.sha }}
         with:
-          arguments: sonar
+          arguments: sonar --stacktrace

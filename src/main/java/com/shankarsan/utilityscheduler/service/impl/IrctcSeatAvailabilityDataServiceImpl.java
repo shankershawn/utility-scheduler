@@ -39,9 +39,11 @@ public class IrctcSeatAvailabilityDataServiceImpl implements SeatAvailabilityDat
                 );
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAll(
-                Map.of("sec-ch-ua", "\"Google Chrome\";v=\"119\", \"Chromium\";v=\"119\", \"Not?A_Brand\";v=\"24\"",
+                Map.of("sec-ch-ua", "\"Google Chrome\";v=\"119\", \"Chromium\";v=\"119\", \"Not?A_Brand\""
+                                + ";v=\"24\"",
                         "sec-ch-ua-mobile", "?0",
-                        "User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+                        "User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+                                + "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
                         "greq", "1699539245708",
                         "Content-Type", "application/json; charset=UTF-8",
                         "Content-Language", "en",
@@ -51,7 +53,8 @@ public class IrctcSeatAvailabilityDataServiceImpl implements SeatAvailabilityDat
                         "sec-ch-ua-platform", "\"macOS\"")
         );
         ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate
-                .exchange(RequestEntity.<SeatAvailabilityRequestDto>post(url).headers(httpHeaders).body(seatAvailabilityRequestDto),
+                .exchange(RequestEntity.<SeatAvailabilityRequestDto>post(url).headers(httpHeaders)
+                                .body(seatAvailabilityRequestDto),
                         SeatAvailabilityResponseDto.class);
         try {
             Thread.sleep(applicationConfiguration.getApiCallIntervalMillis());

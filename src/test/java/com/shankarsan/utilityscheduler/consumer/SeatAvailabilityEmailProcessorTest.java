@@ -60,8 +60,8 @@ class SeatAvailabilityEmailProcessorTest {
 
     @ParameterizedTest
     @MethodSource("getChangedAvailabilityStatus")
-    void shouldSendMailForChangedAvailabilityStatusPresentInCache
-            (String afterAvailabilityStatus, SeatAvailabilityResponseDto cachedSeatAvailabilityResponseDto) {
+    void shouldSendMailForChangedAvailabilityStatusPresentInCache(
+            String afterAvailabilityStatus, SeatAvailabilityResponseDto cachedSeatAvailabilityResponseDto) {
 
         SeatAvailabilityResponseDto seatAvailabilityResponseDto =
                 getSeatAvailabilityResponseDto(afterAvailabilityStatus);

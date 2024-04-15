@@ -1,9 +1,18 @@
+def coverageExclusions = [
+        "**/constants/*",
+        "**/dto/*",
+        "**/exception/*"
+].join(",")
+
 sonar {
     properties {
+        //sonar.host.url and sonar.token are obtained from vault
         property("sonar.projectKey", "utility-scheduler")
-        property("sonar.host.url", "http://144.24.128.195:9000")
         property("sonar.qualitygate.wait", true)
-        property("sonar.qualitygate.timeout", 1800)
+        property("sonar.qualitygate.timeout", 3600)
+        property("sonar.coverage.exclusions", coverageExclusions)
+        property("sonar.scm.disabled", true)
+        property("sonar.web.http.keepAliveTimeout", 3600000)
 
     }
 }

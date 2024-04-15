@@ -1,6 +1,6 @@
 package com.shankarsan.utilityscheduler.constants;
 
-public class CommonConstants {
+public final class CommonConstants {
 
     private CommonConstants() {
 

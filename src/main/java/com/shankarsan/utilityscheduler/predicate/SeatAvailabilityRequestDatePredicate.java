@@ -1,4 +1,4 @@
-package com.shankarsan.utilityscheduler.filter;
+package com.shankarsan.utilityscheduler.predicate;
 
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;
@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
-public class SeatAvailabilityRequestDateFilter implements Predicate<SeatAvailabilityRequestDto> {
+public class SeatAvailabilityRequestDatePredicate implements Predicate<SeatAvailabilityRequestDto> {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 

@@ -6,8 +6,9 @@ import com.shankarsan.utilityscheduler.consumer.SeatAvailabilityEmailProcessor;
 import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
-import com.shankarsan.utilityscheduler.filter.SeatAvailabilityResponseDateFilter;
 import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;
+import com.shankarsan.utilityscheduler.predicate.SeatAvailabilityRequestDatePredicate;
+import com.shankarsan.utilityscheduler.predicate.provider.SeatAvailabilityResponseDatePredicateProvider;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
 import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityInputStreamTransformer;
@@ -50,7 +51,9 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
     private final SeatAvailabilityDateParser seatAvailabilityDateParser;
 
-    private final SeatAvailabilityResponseDateFilter seatAvailabilityResponseDateFilter;
+    private final SeatAvailabilityResponseDatePredicateProvider seatAvailabilityResponseDatePredicateProvider;
+
+    private final SeatAvailabilityRequestDatePredicate seatAvailabilityRequestDatePredicate;
 
     @Transactional
     public void processSeatAvailability() {
@@ -64,7 +67,7 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
             seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
                     //TODO .map(this::publishRequestToKafka)
-                    //TODO perform below 
+                    //TODO perform below
                     .map(this::invokeSeatAvailabilityDataService)
                     .map(seatAvailabilityResponseFlattenTransformer)
                     .map(this::filterRepeatedAvailabilityDates)
@@ -79,7 +82,8 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         }
     }
 
-    private SeatAvailabilityResponseDto filterRepeatedAvailabilityDates(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+    private SeatAvailabilityResponseDto filterRepeatedAvailabilityDates(
+            SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         final List<AvailabilityDayDto> availabilityDayDtos = Optional.ofNullable(seatAvailabilityResponseDto)
                 .map(SeatAvailabilityResponseDto::getAvlDayList)
                 .orElseThrow(() -> new IllegalStateException("availabilityDayDtos is null"));
@@ -91,9 +95,10 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         return seatAvailabilityResponseDto;
     }
 
-    private SeatAvailabilityResponseDto applySeatAvailabilityResponseDateFilter(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+    private SeatAvailabilityResponseDto applySeatAvailabilityResponseDateFilter(
+            SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
         Predicate<AvailabilityDayDto> dateFilter = Optional.ofNullable(seatAvailabilityResponseDto)
-                .map(seatAvailabilityResponseDateFilter::getAvailabilityDayDtoPredicate)
+                .map(seatAvailabilityResponseDatePredicateProvider::getAvailabilityDayDtoPredicate)
                 .orElseThrow(() -> new IllegalStateException("Filter predicate not found"));
 
         Optional.of(seatAvailabilityResponseDto)
@@ -106,16 +111,20 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         return seatAvailabilityResponseDto;
     }
 
-    private List<SeatAvailabilityResponseDto> invokeSeatAvailabilityDataService
-            (SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
+    private List<SeatAvailabilityResponseDto> invokeSeatAvailabilityDataService(
+            SeatAvailabilityRequestDto seatAvailabilityRequestDto) {
         final String originalFromDate = seatAvailabilityRequestDto.getFromDate();
         List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos = seatAvailabilityRequestDateTransformer
                 .apply(seatAvailabilityRequestDto).stream()
                 .map(date -> {
                     seatAvailabilityRequestDto.setFromDate(seatAvailabilityDateParser.format(date));
+                    return seatAvailabilityRequestDto;
+                })
+                .filter(seatAvailabilityRequestDatePredicate)
+                .map(seatAvailabilityRequestDto1 -> {
                     SeatAvailabilityResponseDto seatAvailabilityResponseDto = seatAvailabilityDataService
-                            .fetchAvailabilityData(seatAvailabilityRequestDto);
-                    seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto);
+                            .fetchAvailabilityData(seatAvailabilityRequestDto1);
+                    seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto1);
                     return seatAvailabilityResponseDto;
                 })
                 .collect(Collectors.toList());

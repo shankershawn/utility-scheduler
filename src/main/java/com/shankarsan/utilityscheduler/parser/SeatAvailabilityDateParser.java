@@ -1,5 +1,6 @@
 package com.shankarsan.utilityscheduler.parser;
 
+import com.shankarsan.utilityscheduler.exception.ApplicationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +15,13 @@ public class SeatAvailabilityDateParser {
     private final ThreadLocal<SimpleDateFormat> simpleDateFormatThreadLocal =
             ThreadLocal.withInitial(() -> new SimpleDateFormat("dd-MM-yyyy"));
 
-    public Date parse(String dateString) {
-        Date date = null;
+    public Date parse(String dateString) throws ApplicationException {
+        Date date;
         try {
             date = simpleDateFormatThreadLocal.get().parse(dateString);
         } catch (ParseException pe) {
-            log.error("Exception while parsing date", pe);
-        } catch (NumberFormatException pe) {
-            log.error("NumberFormatException", pe);
+            log.error("ParseException while parsing date", pe);
+            throw new ApplicationException(pe);
         } finally {
             simpleDateFormatThreadLocal.remove();
         }
