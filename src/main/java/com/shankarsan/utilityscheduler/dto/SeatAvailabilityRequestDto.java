@@ -33,9 +33,13 @@ public class SeatAvailabilityRequestDto implements Serializable {
     private List<EmailDto> emailDtoList;
     private List<Integer> runDays;
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(String fromDate, Boolean isAvailabilityApiArgument) {
         String[] fromDateArr = fromDate.split("-");
-        this.fromDate = new StringBuilder(fromDateArr[2]).append(fromDateArr[1]).append(fromDateArr[0]).toString();
+        if (isAvailabilityApiArgument) {
+            this.fromDate = new StringBuilder(fromDateArr[2]).append(fromDateArr[1]).append(fromDateArr[0]).toString();
+        } else {
+            this.setFromDate(fromDate);
+        }
         this.journeyDate = fromDate;
     }
 
