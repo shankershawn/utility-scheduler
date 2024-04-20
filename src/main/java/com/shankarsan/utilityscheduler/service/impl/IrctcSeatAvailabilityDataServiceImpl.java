@@ -4,10 +4,11 @@ import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
+import com.shankarsan.utilityscheduler.exception.ApplicationException;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-@Service
+@Service(CommonConstants.IRCTC)
 @RequiredArgsConstructor
-@Profile(CommonConstants.IRCTC)
 @Slf4j
 public class IrctcSeatAvailabilityDataServiceImpl implements SeatAvailabilityDataService {
 
+    @Qualifier(CommonConstants.IRCTC + "Template")
     private final RestTemplate irctcRestTemplate;
 
     private final ApplicationConfiguration applicationConfiguration;
@@ -52,15 +53,15 @@ public class IrctcSeatAvailabilityDataServiceImpl implements SeatAvailabilityDat
                         "Referer", "https://www.irctc.co.in/nget/booking/train-list",
                         "sec-ch-ua-platform", "\"macOS\"")
         );
-        ResponseEntity<SeatAvailabilityResponseDto> responseEntity = irctcRestTemplate
-                .exchange(RequestEntity.<SeatAvailabilityRequestDto>post(url).headers(httpHeaders)
-                                .body(seatAvailabilityRequestDto),
-                        SeatAvailabilityResponseDto.class);
+        ResponseEntity<SeatAvailabilityResponseDto> responseEntity;
         try {
-            Thread.sleep(applicationConfiguration.getApiCallIntervalMillis());
-        } catch (InterruptedException e) {
-            log.error("Sleep failed", e);
-            throw new IllegalStateException(e);
+            responseEntity = irctcRestTemplate
+                    .exchange(RequestEntity.<SeatAvailabilityRequestDto>post(url).headers(httpHeaders)
+                                    .body(seatAvailabilityRequestDto),
+                            SeatAvailabilityResponseDto.class);
+        } catch (Exception e) {
+            log.error("Exception encountered", e);
+            throw new ApplicationException(e);
         }
         return responseEntity.getBody();
     }

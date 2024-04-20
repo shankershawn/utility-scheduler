@@ -24,7 +24,11 @@ public class SeatAvailabilityRequestDatePredicate implements Predicate<SeatAvail
         return Optional.of(seatAvailabilityRequestDto)
                 .map(SeatAvailabilityRequestDto::getFromDate)
                 .map(seatAvailabilityDateParser::parse)
-                .map(date -> !date.before(new Date()) && !date.after(toDate))
+                .map(date -> !date
+                        .before(seatAvailabilityDateParser
+                                .parse(seatAvailabilityDateParser
+                                        .format(new Date())))
+                        && !date.after(toDate))
                 .orElseThrow(() -> new IllegalStateException("Unable to process filter for request date"));
     }
 }
