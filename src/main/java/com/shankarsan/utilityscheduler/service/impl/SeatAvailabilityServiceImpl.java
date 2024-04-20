@@ -117,18 +117,24 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         List<SeatAvailabilityResponseDto> seatAvailabilityResponseDtos = seatAvailabilityRequestDateTransformer
                 .apply(seatAvailabilityRequestDto).stream()
                 .map(date -> {
-                    seatAvailabilityRequestDto.setFromDate(seatAvailabilityDateParser.format(date));
+                    seatAvailabilityRequestDto.setFromDate(seatAvailabilityDateParser.format(date),
+                            Boolean.FALSE);
                     return seatAvailabilityRequestDto;
                 })
                 .filter(seatAvailabilityRequestDatePredicate)
                 .map(seatAvailabilityRequestDto1 -> {
+                    seatAvailabilityRequestDto1
+                            .setFromDate(seatAvailabilityDateParser
+                                            .format(seatAvailabilityDateParser
+                                                    .parse(seatAvailabilityRequestDto1.getFromDate())),
+                                    Boolean.TRUE);
                     SeatAvailabilityResponseDto seatAvailabilityResponseDto = seatAvailabilityDataService
                             .fetchAvailabilityData(seatAvailabilityRequestDto1);
                     seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto1);
                     return seatAvailabilityResponseDto;
                 })
                 .collect(Collectors.toList());
-        seatAvailabilityRequestDto.setFromDate(originalFromDate);
+        seatAvailabilityRequestDto.setFromDate(originalFromDate, Boolean.TRUE);
         return seatAvailabilityResponseDtos;
     }
 
