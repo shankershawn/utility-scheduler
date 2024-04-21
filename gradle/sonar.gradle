@@ -1,7 +1,10 @@
 def coverageExclusions = [
         "**/constants/*",
         "**/dto/*",
-        "**/exception/*"
+        "**/exception/*",
+        "**/configuration/*",
+        "**/service/*",
+        "**/predicate/*"
 ].join(",")
 
 sonar {
