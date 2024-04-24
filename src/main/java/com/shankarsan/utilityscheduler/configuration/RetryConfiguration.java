@@ -1,6 +1,7 @@
 package com.shankarsan.utilityscheduler.configuration;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
@@ -14,6 +15,7 @@ public class RetryConfiguration {
     private final ApplicationConfiguration applicationConfiguration;
 
     @Bean
+    @RefreshScope
     public RetryTemplate retryTemplate() {
         RetryTemplate retryTemplate = new RetryTemplate();
         retryTemplate.setRetryPolicy(new MaxAttemptsRetryPolicy(applicationConfiguration.getRetryMaxAttempts()));

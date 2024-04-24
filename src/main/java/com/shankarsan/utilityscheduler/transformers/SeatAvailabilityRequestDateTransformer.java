@@ -22,6 +22,11 @@ public class SeatAvailabilityRequestDateTransformer implements Function<SeatAvai
                 .map(SeatAvailabilityRequestDto::getFromDate)
                 .map(seatAvailabilityDateParser::parse)
                 .map(date -> {
+                    final Date todayDate = seatAvailabilityDateParser
+                            .parse(seatAvailabilityDateParser.format(new Date()));
+                    if (date.before(todayDate)) {
+                        date = todayDate;
+                    }
                     List<Date> callDates = new ArrayList<>();
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
