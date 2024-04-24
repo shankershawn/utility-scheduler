@@ -15,8 +15,9 @@ permissions:
   contents: read
 
 jobs:
+  runs-on: ubuntu-latest
   prep:
-    runs-on: ubuntu-latest
+    name: Prepare
     steps:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v2
@@ -48,7 +49,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
   build:
-    runs-on: ubuntu-latest
+    name: Build
+    needs: prep
     steps:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
@@ -57,7 +59,8 @@ jobs:
         env:
           GITHUB_VERSION: ${{ github.sha }}
   sonar:
-    runs-on: ubuntu-latest
+    name: Sonar
+    needs: build
     steps:
       - name: Sonarqube Scan
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
