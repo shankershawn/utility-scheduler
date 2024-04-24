@@ -5,17 +5,17 @@ import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Service(CommonConstants.CONFIRM_TKT)
 @RequiredArgsConstructor
-@Profile(CommonConstants.CONFIRM_TKT)
 public class ConfirmTktSeatAvailabilityDataServiceImpl implements SeatAvailabilityDataService {
 
+    @Qualifier(CommonConstants.CONFIRM_TKT + "Template")
     private final RestTemplate confirmTktRestTemplate;
 
     @Override

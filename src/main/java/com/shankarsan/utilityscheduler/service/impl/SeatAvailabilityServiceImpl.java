@@ -16,9 +16,11 @@ import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityRequestDateT
 import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityResponseFlattenTransformer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,11 @@ import java.util.stream.Collectors;
 @EnableCaching
 public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
 
-    private final SeatAvailabilityDataService seatAvailabilityDataService;
+    @Qualifier(CommonConstants.IRCTC)
+    private final SeatAvailabilityDataService irctcSeatAvailabilityDataServiceImpl;
+
+    @Qualifier(CommonConstants.CONFIRM_TKT)
+    private final SeatAvailabilityDataService confirmTktSeatAvailabilityDataServiceImpl;
 
     private final DropboxWebhookService dropboxWebhookService;
 
@@ -54,6 +60,8 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
     private final SeatAvailabilityResponseDatePredicateProvider seatAvailabilityResponseDatePredicateProvider;
 
     private final SeatAvailabilityRequestDatePredicate seatAvailabilityRequestDatePredicate;
+
+    private final RetryTemplate retryTemplate;
 
     @Transactional
     public void processSeatAvailability() {
@@ -128,8 +136,19 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                                             .format(seatAvailabilityDateParser
                                                     .parse(seatAvailabilityRequestDto1.getFromDate())),
                                     Boolean.TRUE);
-                    SeatAvailabilityResponseDto seatAvailabilityResponseDto = seatAvailabilityDataService
-                            .fetchAvailabilityData(seatAvailabilityRequestDto1);
+                    SeatAvailabilityResponseDto seatAvailabilityResponseDto =
+                            retryTemplate.execute(retryContext -> {
+                                        log.info("Retrying irctc call. Retry count is {}",
+                                                retryContext.getRetryCount());
+                                        return irctcSeatAvailabilityDataServiceImpl
+                                                .fetchAvailabilityData(seatAvailabilityRequestDto1);
+                                    },
+                                    retryContext -> {
+                                        log.info("Falling back to confirm tkt irctc call. Retry count is {}",
+                                                retryContext.getRetryCount());
+                                        return confirmTktSeatAvailabilityDataServiceImpl
+                                                .fetchAvailabilityData(seatAvailabilityRequestDto1);
+                                    });
                     seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto1);
                     return seatAvailabilityResponseDto;
                 })

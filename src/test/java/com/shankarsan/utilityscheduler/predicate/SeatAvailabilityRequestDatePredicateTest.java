@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +44,7 @@ class SeatAvailabilityRequestDatePredicateTest {
                 .map(Integer::valueOf).toArray(Integer[]::new);
         calendar.set(fromDateArray[2], fromDateArray[1] - 1, fromDateArray[0]);
         Date fromDate = calendar.getTime();
+        when(seatAvailabilityDateParser.format(any(Date.class))).thenReturn("01-02-2025");
         when(seatAvailabilityDateParser.parse(fromDateString)).thenReturn(fromDate);
         assertEquals(result, seatAvailabilityRequestDatePredicate.test(seatAvailabilityRequestDto));
     }

@@ -38,6 +38,12 @@ public class ApplicationConfiguration {
 
     private List<String> allowedErrorCodes;
 
+    private int retryMaxAttempts;
+
+    private long retryMaxInterval;
+
+    private double retryBackoffIntervalMultiplier;
+
 
     public String getCronExpression(Map<String, String> configMap) {
         return extractFromMap(configMap, CommonConstants.CRON_EXPRESSION);
