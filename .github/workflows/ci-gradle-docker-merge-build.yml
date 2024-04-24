@@ -15,9 +15,9 @@ permissions:
   contents: read
 
 jobs:
-  runs-on: ubuntu-latest
   prep:
     name: Prepare
+    runs-on: ubuntu-latest
     steps:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v2
@@ -61,6 +61,7 @@ jobs:
   build:
     name: Build
     needs: prepare
+    runs-on: ubuntu-latest
     steps:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
@@ -71,6 +72,7 @@ jobs:
   sonar:
     name: Sonar Check
     needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Sonarqube Scan
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
@@ -81,6 +83,7 @@ jobs:
   publish:
     name: Publish to Sonatype
     needs: sonar
+    runs-on: ubuntu-latest
     steps:
       - name: Publish to Sonatype
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
@@ -92,6 +95,7 @@ jobs:
   docker-image-build:
     name: Create Docker image
     needs: sonar
+    runs-on: ubuntu-latest
     steps:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4

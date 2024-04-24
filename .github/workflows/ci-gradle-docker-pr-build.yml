@@ -15,9 +15,9 @@ permissions:
   contents: read
 
 jobs:
-  runs-on: ubuntu-latest
   prep:
     name: Prepare
+    runs-on: ubuntu-latest
     steps:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v2
@@ -51,6 +51,7 @@ jobs:
   build:
     name: Build
     needs: prep
+    runs-on: ubuntu-latest
     steps:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
@@ -61,6 +62,7 @@ jobs:
   sonar:
     name: Sonar
     needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Sonarqube Scan
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
