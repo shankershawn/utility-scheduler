@@ -12,6 +12,7 @@ on:
     workflows: [ "Java CI with Gradle and Docker - Merge Build" ]
     types:
       - completed
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,60 +20,43 @@ permissions:
 jobs:
   deploy:
 
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     
     steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libatomic1 ssh sshpass
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v2
         with:
           url: http://144.24.128.195:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-key | OCI_INSTANCE_20230319_1325_SSH_KEY ;
-            secret/data/utility-scheduler oci-instance-20230319-1325-ssh-passphrase | OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE ;
-            secret/data/utility-scheduler oci-instance-20230319-1325-host | OCI_INSTANCE_20230319_1325_HOST ;
-            secret/data/utility-scheduler oci-instance-20230319-1325-user | OCI_INSTANCE_20230319_1325_USER
-#      - name: Configure ssh
-#        run: |
-#          sudo apt-get update -y
-#          sudo apt-get install ssh -y
-#
-#          mkdir -p ~/.ssh/
-#          echo "${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}" > ~/.ssh/OCI_INSTANCE_20230319_1325
-#          chmod 600 ~/.ssh/OCI_INSTANCE_20230319_1325
-#
-#          echo Host OCI_INSTANCE_20230319_1325 > ~/.ssh/config
-#          echo HostName ${{ env.OCI_INSTANCE_20230319_1325_HOST }} >> ~/.ssh/config
-#          echo User ${{ env.OCI_INSTANCE_20230319_1325_USER }} >> ~/.ssh/config
-#          echo IdentityFile \~/.ssh/OCI_INSTANCE_20230319_1325 >> ~/.ssh/config
-#          echo StrictHostKeyChecking no >> ~/.ssh/config
-#          chmod 600 ~/.ssh/config
-#          ls -lart ~/.ssh/
-#          cat ~/.ssh/config
-#      - name: Undeploy app
-#        run: |
-#          ssh OCI_INSTANCE_20230319_1325 "docker stop utility-scheduler && docker rm utility-scheduler"
-#          sleep 30
-#      - name: Deploy app
-#        run: |
-#          ssh OCI_INSTANCE_20230319_1325 "docker pull shankershawn/utility-scheduler:latest && docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,confirmtkt,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest"
+            secret/data/utility-scheduler deploy-server-host | DEPLOY_SERVER_HOST ;
+            secret/data/utility-scheduler deploy-server-user | DEPLOY_SERVER_USER ;
+            secret/data/utility-scheduler deploy-server-password | DEPLOY_SERVER_PASSWORD
       - name: Undeploy app
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
-          username: ${{ env.OCI_INSTANCE_20230319_1325_USER }}
-          key: ${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}
-          passphrase: ${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}
-          script: |
-            docker stop utility-scheduler
-            docker rm utility-scheduler
+        run: |
+          sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker stop utility-scheduler
+          sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker rm utility-scheduler
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ env.DEPLOY_SERVER_HOST }}
+#          username: ${{ env.DEPLOY_SERVER_USER }}
+#          password: ${{ env.DEPLOY_SERVER_PASSWORD }}
+#          script: |
+#            docker stop utility-scheduler
+#            docker rm utility-scheduler
       - name: Deploy app
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ env.OCI_INSTANCE_20230319_1325_HOST }}
-          username: ${{ env.OCI_INSTANCE_20230319_1325_USER }}
-          key: ${{ env.OCI_INSTANCE_20230319_1325_SSH_KEY }}
-          passphrase: ${{ env.OCI_INSTANCE_20230319_1325_SSH_PASSPHRASE }}
-          script: |
-            docker pull shankershawn/utility-scheduler:latest
-            docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,confirmtkt,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
+        run: |
+          sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker pull shankershawn/utility-scheduler:latest
+          sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ env.DEPLOY_SERVER_HOST }}
+#          username: ${{ env.DEPLOY_SERVER_USER }}
+#          password: ${{ env.DEPLOY_SERVER_PASSWORD }}
+#          script: |
+#            docker pull shankershawn/utility-scheduler:latest
+#            docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
