@@ -15,8 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  prep:
-    name: Prepare
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Import Vault Secrets
@@ -30,11 +29,6 @@ jobs:
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
             secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
             secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
-  build:
-    name: Build
-    needs: prep
-    runs-on: ubuntu-latest
-    steps:
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -48,17 +42,6 @@ jobs:
           arguments: clean build
         env:
           GITHUB_VERSION: ${{ github.sha }}
-      - name: Upload workspace
-        uses: actions/upload-artifact@v4
-        with:
-          path: ${{ github.workspace }}/*
-  sonar:
-    name: Sonar
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download workspace
-        uses: actions/upload-artifact@v4
       - name: Sonarqube Scan
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         env:
