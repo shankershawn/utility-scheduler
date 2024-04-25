@@ -15,8 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  prep:
-    name: Prepare
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Import Vault Secrets
@@ -58,33 +57,18 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-  build:
-    name: Build
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: clean build
         env:
           GITHUB_VERSION: ${{ github.sha }}
-  sonar:
-    name: Sonar Check
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Sonarqube Scan
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         env:
           GITHUB_VERSION: ${{ github.sha }}
         with:
           arguments: sonar --stacktrace
-  publish:
-    name: Publish to Sonatype
-    needs: sonar
-    runs-on: ubuntu-latest
-    steps:
       - name: Publish to Sonatype
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         env:
@@ -92,11 +76,6 @@ jobs:
         with:
           arguments:
             publish
-  docker-image-build:
-    name: Create Docker image
-    needs: sonar
-    runs-on: ubuntu-latest
-    steps:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
