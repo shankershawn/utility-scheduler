@@ -79,9 +79,9 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     .filter(seatAvailabilityRequestDto -> {
                         Date toDate = seatAvailabilityDateParser.parse(seatAvailabilityRequestDto.getToDate());
                         Date fromDate = seatAvailabilityDateParser.parse(seatAvailabilityRequestDto.getFromDate());
-                        return !fromDate.after(toDate) &&
-                                !toDate.before(seatAvailabilityDateParser
-                                        .parse(seatAvailabilityDateParser.format(new Date())));
+                        return !fromDate.after(toDate)
+                                && !toDate.before(seatAvailabilityDateParser
+                                .parse(seatAvailabilityDateParser.format(new Date())));
                     })
                     .map(this::invokeSeatAvailabilityDataService)
                     .map(seatAvailabilityResponseFlattenTransformer)
