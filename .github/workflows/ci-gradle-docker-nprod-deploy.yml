@@ -40,6 +40,7 @@ jobs:
         run: |
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker stop utility-scheduler
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker rm utility-scheduler
+          sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker rmi shankershawn/utility-scheduler
 #        uses: appleboy/ssh-action@master
 #        with:
 #          host: ${{ env.DEPLOY_SERVER_HOST }}
