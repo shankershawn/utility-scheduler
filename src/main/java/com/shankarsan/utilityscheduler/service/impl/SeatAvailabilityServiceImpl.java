@@ -76,6 +76,13 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
             seatAvailabilityInputStreamTransformer.apply(new FileInputStream(seatAvailabilityFileData)).stream()
                     //TODO .map(this::publishRequestToKafka)
                     //TODO perform below
+                    .filter(seatAvailabilityRequestDto -> {
+                        Date toDate = seatAvailabilityDateParser.parse(seatAvailabilityRequestDto.getToDate());
+                        Date fromDate = seatAvailabilityDateParser.parse(seatAvailabilityRequestDto.getFromDate());
+                        return !fromDate.after(toDate)
+                                && !toDate.before(seatAvailabilityDateParser
+                                .parse(seatAvailabilityDateParser.format(new Date())));
+                    })
                     .map(this::invokeSeatAvailabilityDataService)
                     .map(seatAvailabilityResponseFlattenTransformer)
                     .map(this::filterRepeatedAvailabilityDates)

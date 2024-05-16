@@ -16,9 +16,7 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v2
