@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Import Vault Secrets
-        uses: hashicorp/vault-action@v2
+        uses: hashicorp/vault-action@v3.0.0
         with:
           url: ${{ secrets.VAULT_URL }}
           token: ${{ secrets.VAULT_TOKEN }}
@@ -31,28 +31,28 @@ jobs:
             secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
             secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3.0.0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3.3.0
       - name: Docker Hub Login
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3.1.0
         with:
           username: shankershawn
           password: ${{ env.DOCKER_HUB_TOKEN }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.6
       - name: Set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4.2.1
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
       - name: Cache SonarQube packages
-        uses: actions/cache@v1
+        uses: actions/cache@v4.0.2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache Gradle packages
-        uses: actions/cache@v1
+        uses: actions/cache@v4.0.2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
@@ -77,7 +77,7 @@ jobs:
           arguments:
             publish
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5.3.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
