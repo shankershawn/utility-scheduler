@@ -5,9 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -26,9 +24,9 @@ class ThreadPoolConfigurationTest {
         when(applicationConfiguration.getCorePoolSize()).thenReturn(10);
         when(applicationConfiguration.getMaximumPoolSize()).thenReturn(100);
         when(applicationConfiguration.getKeepAliveTimeMillis()).thenReturn(1000L);
-        ThreadPoolExecutor threadPoolExecutor = threadPoolConfiguration.getThreadPoolExecutor();
+        ThreadPoolTaskExecutor threadPoolExecutor = threadPoolConfiguration.getThreadPoolTaskExecutor();
         assertEquals(10, threadPoolExecutor.getCorePoolSize());
-        assertEquals(100, threadPoolExecutor.getMaximumPoolSize());
-        assertEquals(1000L, threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS));
+        assertEquals(100, threadPoolExecutor.getMaxPoolSize());
+        assertEquals(1, threadPoolExecutor.getKeepAliveSeconds());
     }
 }
