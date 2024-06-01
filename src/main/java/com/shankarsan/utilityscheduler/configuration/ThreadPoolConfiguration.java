@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,10 +16,12 @@ public class ThreadPoolConfiguration {
 
     @Bean
     @RefreshScope
-    public ThreadPoolExecutor getThreadPoolExecutor() {
-        log.debug("Creating getThreadPoolExecutor bean");
-        return new ThreadPoolExecutor(applicationConfiguration.getCorePoolSize(),
-                applicationConfiguration.getMaximumPoolSize(), applicationConfiguration.getKeepAliveTimeMillis(),
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+    public ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
+        log.debug("Creating threadPoolTaskExecutor bean");
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(applicationConfiguration.getCorePoolSize());
+        threadPoolTaskExecutor.setMaxPoolSize(applicationConfiguration.getMaximumPoolSize());
+        threadPoolTaskExecutor.setKeepAliveSeconds((int) applicationConfiguration.getKeepAliveTimeMillis() / 1000);
+        return threadPoolTaskExecutor;
     }
 }
