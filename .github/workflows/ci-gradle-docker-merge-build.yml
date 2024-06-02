@@ -87,5 +87,5 @@ jobs:
           push: true
           build-args: |
             GITHUB_SHA=${{ github.sha }}
-            RUN_NUMBER: ${{ github.run_number }}
+            RUN_NUMBER=${{ github.run_number }}
           tags: shankershawn/utility-scheduler:${{ github.sha }},shankershawn/utility-scheduler:latest
