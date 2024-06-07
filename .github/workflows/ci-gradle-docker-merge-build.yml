@@ -92,5 +92,5 @@ jobs:
   deploy:
     needs:
       - build
-    uses: ./.github/workflows/ci-gradle-docker-nprod-deploy.yml@main
+    uses: ./.github/workflows/ci-gradle-docker-nprod-deploy.yml
 
