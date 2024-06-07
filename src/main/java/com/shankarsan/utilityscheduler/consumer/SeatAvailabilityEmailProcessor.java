@@ -76,6 +76,8 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                     rowBuilder.appendAttribute(STYLE, "background-color: #FFFEC4;");
                 } else if (availabilityDayDto.getAvailabilityStatus().contains("WL")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #FF9B9B;");
+                } else if (availabilityDayDto.getAvailabilityStatus().contains("TRAIN DEPARTED")) {
+                    rowBuilder.appendAttribute(STYLE, "background-color: #A0DEFF;");
                 }
                 rowBuilder.completeTag();
                 stringBuilderFlatHtml.appendStartTag(TD).completeTag();
