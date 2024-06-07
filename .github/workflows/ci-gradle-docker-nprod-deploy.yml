@@ -19,16 +19,15 @@ permissions:
 
 jobs:
   deploy:
-
     runs-on: raspberrypi
-    
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Install dependencies
         run: |
           sudo apt-get update -y
           sudo apt-get install -y libatomic1 ssh sshpass
       - name: Import Vault Secrets
-        uses: hashicorp/vault-action@v2
+        uses: hashicorp/vault-action@v3.0.0
         with:
           url: http://144.24.128.195:8200
           token: ${{ secrets.VAULT_TOKEN }}
@@ -41,23 +40,12 @@ jobs:
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker stop utility-scheduler
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker rm utility-scheduler
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker rmi shankershawn/utility-scheduler
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ env.DEPLOY_SERVER_HOST }}
-#          username: ${{ env.DEPLOY_SERVER_USER }}
-#          password: ${{ env.DEPLOY_SERVER_PASSWORD }}
-#          script: |
-#            docker stop utility-scheduler
-#            docker rm utility-scheduler
       - name: Deploy app
         run: |
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker pull shankershawn/utility-scheduler:latest
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ env.DEPLOY_SERVER_HOST }}
-#          username: ${{ env.DEPLOY_SERVER_USER }}
-#          password: ${{ env.DEPLOY_SERVER_PASSWORD }}
-#          script: |
-#            docker pull shankershawn/utility-scheduler:latest
-#            docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
+  skip:
+    runs-on: raspberrypi
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'The triggering workflow failed'

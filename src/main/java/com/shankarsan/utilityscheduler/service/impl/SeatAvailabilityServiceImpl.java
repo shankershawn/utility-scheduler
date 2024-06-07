@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -107,6 +108,19 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
         availabilityDayDtos1.addAll(availabilityDayDtos);
         availabilityDayDtos.clear();
         availabilityDayDtos.addAll(availabilityDayDtos1);
+
+        availabilityDayDtos.stream()
+                .map(AvailabilityDayDto::getAvailabilityDate)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .forEach(entry -> {
+                    Long count = entry.getValue();
+                    while (count-- > 1) {
+                        log.info("Removing duplicate entry for {}", entry.getKey());
+                        availabilityDayDtos.remove(availabilityDayDtos.lastIndexOf(entry.getKey()));
+                    }
+                });
         return seatAvailabilityResponseDto;
     }
 
