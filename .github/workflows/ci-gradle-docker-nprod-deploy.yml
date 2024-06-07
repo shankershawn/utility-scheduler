@@ -17,7 +17,6 @@ permissions:
 jobs:
   deploy:
     runs-on: raspberrypi
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Install dependencies
         run: |
@@ -41,8 +40,3 @@ jobs:
         run: |
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker pull shankershawn/utility-scheduler:latest
           sshpass -p ${{ env.DEPLOY_SERVER_PASSWORD }} ssh -q -oStrictHostKeyChecking=no ${{ env.DEPLOY_SERVER_USER }}@${{ env.DEPLOY_SERVER_HOST }} docker run -tid --restart=always -e "SPRING_PROFILES_ACTIVE=nprod,on-demand,scheduler" -e "VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}" --name=utility-scheduler -p 8081:8080 shankershawn/utility-scheduler:latest
-  skip:
-    runs-on: raspberrypi
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'The triggering workflow failed'
