@@ -36,7 +36,8 @@ public class AvailabilityDayDto implements Serializable {
             return false;
         }
         AvailabilityDayDto that = (AvailabilityDayDto) o;
-        return availabilityDate.equals(that.availabilityDate) && availabilityStatus.equals(that.availabilityStatus);
+        return this.availabilityDate.equals(that.availabilityDate) &&
+                this.availabilityStatus.equals(that.availabilityStatus);
     }
 
     @Override
