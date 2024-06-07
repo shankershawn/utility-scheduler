@@ -89,3 +89,8 @@ jobs:
             GITHUB_SHA=${{ github.sha }}
             RUN_NUMBER=${{ github.run_number }}
           tags: shankershawn/utility-scheduler:${{ github.sha }},shankershawn/utility-scheduler:latest
+  deploy:
+    needs:
+      - build
+    uses: .github/workflows/ci-gradle-docker-nprod-deploy.yml
+
