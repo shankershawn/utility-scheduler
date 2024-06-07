@@ -93,4 +93,6 @@ jobs:
     needs:
       - build
     uses: ./.github/workflows/ci-gradle-docker-nprod-deploy.yml
-
+    secrets:
+      VAULT_URL: ${{ secrets.VAULT_URL }}
+      VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
