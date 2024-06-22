@@ -1,4 +1,4 @@
-package com.shankarsan.utilityscheduler.transformers;
+package com.shankarsan.utilityscheduler.transformer;
 
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import lombok.extern.slf4j.Slf4j;

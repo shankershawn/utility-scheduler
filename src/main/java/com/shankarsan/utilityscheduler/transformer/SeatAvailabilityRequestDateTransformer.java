@@ -1,4 +1,4 @@
-package com.shankarsan.utilityscheduler.transformers;
+package com.shankarsan.utilityscheduler.transformer;
 
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.parser.SeatAvailabilityDateParser;

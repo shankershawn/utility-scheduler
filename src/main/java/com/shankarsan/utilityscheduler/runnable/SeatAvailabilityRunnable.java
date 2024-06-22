@@ -17,7 +17,7 @@ public class SeatAvailabilityRunnable {
     private final SeatAvailabilityService seatAvailabilityService;
 
     @Bean
-    public Runnable processSeatAvailabilityRunnable() {
+    public Runnable getSeatAvailabilityRunnable() {
         return () -> {
             log.debug("Processing seat availability");
             seatAvailabilityService.processSeatAvailability();

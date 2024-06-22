@@ -129,7 +129,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
     }
 
     private boolean isAllowedErrorCode(Optional<String> errorMessageOptional) {
-        return errorMessageOptional.isPresent() && applicationConfiguration.getAllowedErrorCodes().stream()
+        return applicationConfiguration.getAllowedErrorCodes().stream()
                 .anyMatch(allowedErrorCode -> errorMessageOptional.get().contains(allowedErrorCode));
 
     }
