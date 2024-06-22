@@ -11,9 +11,9 @@ import com.shankarsan.utilityscheduler.predicate.SeatAvailabilityRequestDatePred
 import com.shankarsan.utilityscheduler.predicate.provider.SeatAvailabilityResponseDatePredicateProvider;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityDataService;
 import com.shankarsan.utilityscheduler.service.SeatAvailabilityService;
-import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityInputStreamTransformer;
-import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityRequestDateTransformer;
-import com.shankarsan.utilityscheduler.transformers.SeatAvailabilityResponseFlattenTransformer;
+import com.shankarsan.utilityscheduler.transformer.SeatAvailabilityInputStreamTransformer;
+import com.shankarsan.utilityscheduler.transformer.SeatAvailabilityRequestDateTransformer;
+import com.shankarsan.utilityscheduler.transformer.SeatAvailabilityResponseFlattenTransformer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

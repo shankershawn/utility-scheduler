@@ -86,7 +86,7 @@ class SeatAvailabilityEmailProcessorTest {
     @ParameterizedTest
     @MethodSource("getUnchangedAvailabilityStatus")
     void shouldNotSendMailForUnchangedAvailabilityStatusPresentInCache(String beforeAvailabilityStatus,
-                                                                    String afterAvailabilityStatus) {
+                                                                       String afterAvailabilityStatus) {
         SeatAvailabilityResponseDto cachedSeatAvailabilityResponseDto =
                 getSeatAvailabilityResponseDto(beforeAvailabilityStatus);
 
@@ -101,7 +101,7 @@ class SeatAvailabilityEmailProcessorTest {
     }
 
     @Test
-    void shouldNotSendMailForErrorMessageInSeatAvailabilityResponseDto() {
+    void shouldNotSendMailForNotAllowedErrorMessageInSeatAvailabilityResponseDto() {
         SeatAvailabilityResponseDto seatAvailabilityResponseDto =
                 getSeatAvailabilityResponseDto();
         seatAvailabilityResponseDto.setErrorMessage("8000 Some error");
@@ -112,6 +112,20 @@ class SeatAvailabilityEmailProcessorTest {
 
         verify(cacheManager, times(0)).getCache(anyString());
         verify(mailService, times(0)).sendMail(any(), any(), any(), any());
+    }
+
+    @Test
+    void shouldSendMailForAllowedErrorMessageInSeatAvailabilityResponseDto() {
+        SeatAvailabilityResponseDto seatAvailabilityResponseDto =
+                getSeatAvailabilityResponseDto("GNWL34/WL14");
+        seatAvailabilityResponseDto.setErrorMessage("8001 Some error");
+
+        when(applicationConfiguration.getAllowedErrorCodes()).thenReturn(List.of("8001"));
+
+        Stream.of(seatAvailabilityResponseDto).forEach(seatAvailabilityEmailProcessor);
+
+        verify(cacheManager, times(1)).getCache(anyString());
+        verify(mailService, times(1)).sendMail(any(), any(), any(), any());
     }
 
     private static SeatAvailabilityResponseDto getSeatAvailabilityResponseDto() {
@@ -134,7 +148,11 @@ class SeatAvailabilityEmailProcessorTest {
                         getSeatAvailabilityResponseDto("GNWL34/WL15")),
                 Arguments.of("AVAILABLE-98", null),
                 Arguments.of("RAC 5/RAC 3", null),
-                Arguments.of("GNWL34/WL10", null));
+                Arguments.of("GNWL34/WL10", null),
+                Arguments.of("TRAIN DEPARTED",
+                        getSeatAvailabilityResponseDto("GNWL34/WL14")),
+                Arguments.of("INVALID",
+                        getSeatAvailabilityResponseDto("GNWL34/WL14")));
     }
 
     private static Stream<Arguments> getUnchangedAvailabilityStatus() {

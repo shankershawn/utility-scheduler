@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     steps:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v3.0.0
