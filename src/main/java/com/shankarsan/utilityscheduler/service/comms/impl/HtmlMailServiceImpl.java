@@ -9,7 +9,6 @@ import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 public class HtmlMailServiceImpl implements MailService {
 
-    private final JavaMailSender javaMailSender;
+    private final JavaMailSenderImpl javaMailSenderImpl;
 
     private final ApplicationConfiguration applicationConfiguration;
 
@@ -34,7 +33,7 @@ public class HtmlMailServiceImpl implements MailService {
             log.debug("Skipping send email");
             return;
         }
-        Session session = Session.getInstance(((JavaMailSenderImpl) javaMailSender).getJavaMailProperties());
+        Session session = Session.getInstance(javaMailSenderImpl.getJavaMailProperties());
         MimeMessage mimeMessage = new MimeMessage(session);
         try {
             mimeMessage.setContent(body, "text/html");
@@ -62,7 +61,7 @@ public class HtmlMailServiceImpl implements MailService {
                             .map(EmailDto::getEmailAddress)
                             .toArray(String[]::new)
                     ).ifPresent(mimeMailMessage::setBcc);
-            javaMailSender.send(mimeMessage);
+            javaMailSenderImpl.send(mimeMessage);
         } catch (MessagingException e) {
             throw new ApplicationException(e);
         }
