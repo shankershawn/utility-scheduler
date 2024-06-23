@@ -20,13 +20,13 @@ import static org.mockito.Mockito.*;
 public class SimpleMailServiceImplTest {
 
     @Mock
-    private MailSender javaMailSender;
+    private MailSender mailSender;
 
     @Mock
     private ApplicationConfiguration applicationConfiguration;
 
     @InjectMocks
-    private SimpleMailServiceImpl htmlMailService;
+    private SimpleMailServiceImpl simpleMailService;
 
     private static List<EmailDto> recipients;
 
@@ -54,16 +54,16 @@ public class SimpleMailServiceImplTest {
     @Test
     void shouldReturnWhenMailFlagIsFalse() {
         lenient().when(applicationConfiguration.getMailFlag()).thenReturn(Boolean.FALSE);
-        htmlMailService.sendMail(recipients, body, subject, attachments);
-        verify(javaMailSender, times(0)).send(any(SimpleMailMessage.class));
+        simpleMailService.sendMail(recipients, body, subject, attachments);
+        verify(mailSender, times(0)).send(any(SimpleMailMessage.class));
     }
 
     @Test
     void shouldSendMail() {
         when(applicationConfiguration.getMailFlag()).thenReturn(Boolean.TRUE);
-        htmlMailService.sendMail(recipients, body, subject, attachments);
+        simpleMailService.sendMail(recipients, body, subject, attachments);
         // Second time call is for coverage
-        htmlMailService.sendMail(recipients, body, subject, attachments);
-        verify(javaMailSender, times(2)).send(any(SimpleMailMessage.class));
+        simpleMailService.sendMail(recipients, body, subject, attachments);
+        verify(mailSender, times(2)).send(any(SimpleMailMessage.class));
     }
 }
