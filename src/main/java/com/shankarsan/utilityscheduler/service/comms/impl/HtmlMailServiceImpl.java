@@ -4,7 +4,6 @@ import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.exception.ApplicationException;
 import com.shankarsan.utilityscheduler.service.comms.MailService;
-import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +28,13 @@ public class HtmlMailServiceImpl implements MailService {
 
     @Override
     public void sendMail(List<EmailDto> recipients, String body, String subject, List<File> attachments) {
-        if (Boolean.FALSE.equals(applicationConfiguration.getMailFlag())) {
-            log.debug("Skipping send email");
-            return;
-        }
-        Session session = Session.getInstance(javaMailSenderImpl.getJavaMailProperties());
-        MimeMessage mimeMessage = new MimeMessage(session);
         try {
+            if (Boolean.FALSE.equals(applicationConfiguration.getMailFlag())) {
+                log.debug("Skipping send email");
+                return;
+            }
+            Session session = Session.getInstance(javaMailSenderImpl.getJavaMailProperties());
+            MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setContent(body, "text/html");
             MimeMailMessage mimeMailMessage = new MimeMailMessage(mimeMessage);
             mimeMailMessage.setSubject(subject);
@@ -62,7 +61,7 @@ public class HtmlMailServiceImpl implements MailService {
                             .toArray(String[]::new)
                     ).ifPresent(mimeMailMessage::setBcc);
             javaMailSenderImpl.send(mimeMessage);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new ApplicationException(e);
         }
     }

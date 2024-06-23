@@ -2,6 +2,7 @@ package com.shankarsan.utilityscheduler.service.comms;
 
 import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
+import com.shankarsan.utilityscheduler.exception.ApplicationException;
 import com.shankarsan.utilityscheduler.service.comms.impl.HtmlMailServiceImpl;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,5 +66,13 @@ public class HtmlMailServiceImplTest {
         when(javaMailSender.getJavaMailProperties()).thenReturn(new Properties());
         htmlMailService.sendMail(recipients, body, subject, attachments);
         verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+    }
+
+    @Test
+    void shouldThrowApplicationException() {
+        when(applicationConfiguration.getMailFlag()).thenThrow(ApplicationException.class);
+        assertThrows(ApplicationException.class,
+                () -> htmlMailService.sendMail(recipients, body, subject, attachments));
+        verify(javaMailSender, times(0)).send(any(MimeMessage.class));
     }
 }
