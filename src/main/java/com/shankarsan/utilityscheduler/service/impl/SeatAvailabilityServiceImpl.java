@@ -173,9 +173,16 @@ public class SeatAvailabilityServiceImpl implements SeatAvailabilityService {
                     seatAvailabilityResponseDto.setSeatAvailabilityRequestDto(seatAvailabilityRequestDto1);
                     return seatAvailabilityResponseDto;
                 })
+                .map(this::assignAvailabilityStatusRank)
                 .collect(Collectors.toList());
         seatAvailabilityRequestDto.setFromDate(originalFromDate, Boolean.TRUE);
         return seatAvailabilityResponseDtos;
+    }
+
+    private SeatAvailabilityResponseDto assignAvailabilityStatusRank(
+            SeatAvailabilityResponseDto seatAvailabilityResponseDto) {
+
+        return seatAvailabilityResponseDto;
     }
 
     private SeatAvailabilityResponseDto logSeatAvailability(SeatAvailabilityResponseDto seatAvailabilityResponseDto) {

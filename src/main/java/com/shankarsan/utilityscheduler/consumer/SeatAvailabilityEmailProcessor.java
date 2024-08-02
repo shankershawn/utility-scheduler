@@ -19,9 +19,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component
@@ -54,7 +57,9 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
         try {
             TagBuilder rowBuilder;
             stringBuilderFlatHtml.appendStartTag(HTML).completeTag();
-            stringBuilderFlatHtml.appendStartTag(BODY).completeTag();
+            stringBuilderFlatHtml.appendStartTag(BODY)
+                    .appendAttribute(STYLE, "font-size: max(1rem, 5mm);")
+                    .completeTag();
             stringBuilderFlatHtml.appendStartTag(TABLE)
                     .appendAttribute(STYLE, "border: 1px solid black;")
                     .completeTag();
@@ -66,6 +71,9 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
             stringBuilderFlatHtml.appendEndTag(TH);
             stringBuilderFlatHtml.appendStartTag(TH).completeTag();
             stringBuilderFlatHtml.appendUnescapedText("Availability");
+            stringBuilderFlatHtml.appendEndTag(TH);
+            stringBuilderFlatHtml.appendStartTag(TH).completeTag();
+            stringBuilderFlatHtml.appendUnescapedText("Change");
             stringBuilderFlatHtml.appendEndTag(TH);
             stringBuilderFlatHtml.appendEndTag(TR);
             for (AvailabilityDayDto availabilityDayDto : availabilityDayDtos) {
@@ -85,6 +93,12 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                 stringBuilderFlatHtml.appendEndTag(TD);
                 stringBuilderFlatHtml.appendStartTag(TD).completeTag();
                 stringBuilderFlatHtml.appendUnescapedText(availabilityDayDto.getAvailabilityStatus());
+                stringBuilderFlatHtml.appendEndTag(TD);
+                stringBuilderFlatHtml.appendStartTag(TD).appendAttribute(STYLE, "text-align: center;").completeTag();
+                if (availabilityDayDto.getAvailabilityChange() != 0) {
+                    stringBuilderFlatHtml
+                            .appendUnescapedText(availabilityDayDto.getAvailabilityChange() > 0 ? "&uarr;" : "&darr;");
+                }
                 stringBuilderFlatHtml.appendEndTag(TD);
                 stringBuilderFlatHtml.appendEndTag(TR);
             }
@@ -160,6 +174,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                 .filter(Predicate.not(List::isEmpty))
                 .ifPresent(fetchedAvailabilityData -> {
                     if (!cachedAvailabilityData.equals(fetchedAvailabilityData)) {
+                        processChangedData(cachedAvailabilityData, fetchedAvailabilityData);
                         log.debug("Data changed:::Setting cache and sending email {}",
                                 seatAvailabilityResponseDto);
                         Optional.ofNullable(cache)
@@ -171,6 +186,26 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                                         .getSeatAvailabilityRequestDto(), seatAvailabilityResponseDto,
                                 Boolean.TRUE);
                     }
+                });
+    }
+
+    private void processChangedData(List<AvailabilityDayDto> cachedAvailabilityData,
+                                    List<AvailabilityDayDto> fetchedAvailabilityData) {
+        Collector<AvailabilityDayDto, ?, Map<String, AvailabilityDayDto>> collector =
+                Collectors.toMap(AvailabilityDayDto::getAvailabilityDate, Function.identity());
+        Consumer<AvailabilityDayDto> availabilityDayDtoConsumer = e -> e
+                .setAvailabilityStatusRank(applicationConfiguration.getAvailabilityStatusRank()
+                        .get(e.getAvailabilityStatus().replaceAll("(?:\\d|-|/|\\s)+", "")));
+        final Map<String, AvailabilityDayDto> cachedAvailabilityDataMap = cachedAvailabilityData.stream()
+                .peek(availabilityDayDtoConsumer)
+                .collect(collector);
+        fetchedAvailabilityData
+                .stream()
+                .peek(availabilityDayDtoConsumer)
+                .forEach(availabilityDayDto -> {
+                    availabilityDayDto
+                            .setAvailabilityChange(cachedAvailabilityDataMap
+                                    .get(availabilityDayDto.getAvailabilityDate()));
                 });
     }
 
