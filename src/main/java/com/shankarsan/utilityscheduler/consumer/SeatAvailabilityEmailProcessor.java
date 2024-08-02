@@ -82,7 +82,8 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                     rowBuilder.appendAttribute(STYLE, "background-color: #B9F3E4;");
                 } else if (availabilityDayDto.getAvailabilityStatus().contains("RAC")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #FFFEC4;");
-                } else if (availabilityDayDto.getAvailabilityStatus().contains("WL")) {
+                } else if (availabilityDayDto.getAvailabilityStatus().contains("WL") ||
+                        availabilityDayDto.getAvailabilityStatus().contains("REGRET")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #FF9B9B;");
                 } else if (availabilityDayDto.getAvailabilityStatus().contains("TRAIN DEPARTED")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #A0DEFF;");
