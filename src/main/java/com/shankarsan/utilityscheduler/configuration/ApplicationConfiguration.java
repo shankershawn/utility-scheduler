@@ -22,6 +22,8 @@ public class ApplicationConfiguration {
 
     private Map<String, String> secretsMap;
 
+    private Map<String, Integer> availabilityStatusRank;
+
     private Map<String, String> urlMap;
 
     private Map<String, String> headerMap;
