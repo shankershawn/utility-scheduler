@@ -146,6 +146,8 @@ class SeatAvailabilityEmailProcessorTest {
                         getSeatAvailabilityResponseDto("RAC 4/RAC 4")),
                 Arguments.of("GNWL34/WL14",
                         getSeatAvailabilityResponseDto("GNWL34/WL15")),
+                Arguments.of("REGRET",
+                        getSeatAvailabilityResponseDto("GNWL38/WL18")),
                 Arguments.of("AVAILABLE-98", null),
                 Arguments.of("RAC 5/RAC 3", null),
                 Arguments.of("GNWL34/WL10", null),
@@ -174,12 +176,29 @@ class SeatAvailabilityEmailProcessorTest {
 
     private static List<AvailabilityDayDto> getAvailabilityDayList() {
         return List.of(AvailabilityDayDto.builder()
-                .availabilityDate("16-12-2023")
-                .availabilityType("AVAILABILITY_TYPE")
-                .currentBkgFlag("N")
-                .reasonType("S")
-                .wlType("GNWL")
-                .build());
+                        .availabilityDate("16-12-2023")
+                        .availabilityType("AVAILABILITY_TYPE")
+                        .availabilityChange(0)
+                        .currentBkgFlag("N")
+                        .reasonType("S")
+                        .wlType("GNWL")
+                        .build(),
+                AvailabilityDayDto.builder()
+                        .availabilityDate("17-12-2023")
+                        .availabilityType("AVAILABILITY_TYPE")
+                        .availabilityChange(1)
+                        .currentBkgFlag("N")
+                        .reasonType("S")
+                        .wlType("GNWL")
+                        .build(),
+                AvailabilityDayDto.builder()
+                        .availabilityDate("18-12-2023")
+                        .availabilityType("AVAILABILITY_TYPE")
+                        .availabilityChange(-1)
+                        .currentBkgFlag("N")
+                        .reasonType("S")
+                        .wlType("GNWL")
+                        .build());
     }
 
     private static SeatAvailabilityRequestDto getSeatAvailabilityRequestDto() {

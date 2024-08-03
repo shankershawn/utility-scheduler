@@ -52,8 +52,8 @@ public class AvailabilityDayDto implements Serializable, Comparable<Availability
     @Override
     public int compareTo(@NonNull AvailabilityDayDto o) {
 
-        if (Optional.ofNullable(this.availabilityStatusRank).isPresent() &&
-                Optional.ofNullable(o.availabilityStatusRank).isPresent()) {
+        if (Optional.ofNullable(this.availabilityStatusRank).isPresent()
+                && Optional.ofNullable(o.availabilityStatusRank).isPresent()) {
             if (Objects.equals(this.availabilityStatusRank, o.availabilityStatusRank)) {
                 if ("1".equals(this.availabilityType)) {
                     return this.availabilityStatus.compareTo(o.availabilityStatus);
