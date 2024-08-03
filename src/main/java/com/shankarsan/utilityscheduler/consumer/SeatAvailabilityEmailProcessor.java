@@ -196,7 +196,7 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
                 Collectors.toMap(AvailabilityDayDto::getAvailabilityDate, Function.identity());
         Consumer<AvailabilityDayDto> availabilityDayDtoConsumer = e -> e
                 .setAvailabilityStatusRank(applicationConfiguration.getAvailabilityStatusRank()
-                        .get(e.getAvailabilityStatus().replaceAll("(?:\\d|-|/|\\s)+", "")));
+                        .get(e.getAvailabilityStatus().replaceAll("[\\d\\s\\-/]+", "")));
         final Map<String, AvailabilityDayDto> cachedAvailabilityDataMap = cachedAvailabilityData.stream()
                 .peek(availabilityDayDtoConsumer)
                 .collect(collector);
