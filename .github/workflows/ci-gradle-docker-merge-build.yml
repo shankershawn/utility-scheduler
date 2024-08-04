@@ -10,6 +10,8 @@ name: Java CI with Gradle and Docker - Merge Build
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - .github/workflows/*
 
 permissions:
   contents: read
@@ -80,7 +82,7 @@ jobs:
           arguments:
             publish
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5.3.0
+        uses: docker/build-push-action@v6.5.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
