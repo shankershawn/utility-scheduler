@@ -10,6 +10,8 @@ name: Java CI with Gradle and Docker - PR Build
 on:
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - .github/workflows/*
 
 permissions:
   contents: read
