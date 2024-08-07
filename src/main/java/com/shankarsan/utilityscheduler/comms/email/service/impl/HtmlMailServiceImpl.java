@@ -1,9 +1,9 @@
-package com.shankarsan.utilityscheduler.service.comms.impl;
+package com.shankarsan.utilityscheduler.comms.email.service.impl;
 
 import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.exception.ApplicationException;
-import com.shankarsan.utilityscheduler.service.comms.MailService;
+import com.shankarsan.utilityscheduler.comms.email.service.MailService;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

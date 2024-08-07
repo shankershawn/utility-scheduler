@@ -1,5 +1,6 @@
 package com.shankarsan.utilityscheduler.service.comms.impl;
 
+import com.shankarsan.utilityscheduler.comms.email.service.impl.HtmlMailServiceImpl;
 import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.exception.ApplicationException;

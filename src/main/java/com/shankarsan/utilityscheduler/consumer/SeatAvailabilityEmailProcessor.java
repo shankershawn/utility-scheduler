@@ -7,7 +7,7 @@ import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
 import com.shankarsan.utilityscheduler.exception.ApplicationException;
-import com.shankarsan.utilityscheduler.service.comms.MailService;
+import com.shankarsan.utilityscheduler.comms.email.service.MailService;
 import j2html.rendering.FlatHtml;
 import j2html.rendering.TagBuilder;
 import lombok.RequiredArgsConstructor;
