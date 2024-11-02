@@ -78,7 +78,11 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
             stringBuilderFlatHtml.appendEndTag(TR);
             for (AvailabilityDayDto availabilityDayDto : availabilityDayDtos) {
                 rowBuilder = stringBuilderFlatHtml.appendStartTag(TR);
-                if (availabilityDayDto.getAvailabilityStatus().contains("AVAILABLE")) {
+                if (availabilityDayDto.getAvailabilityStatus().contains("CURR_AVBL")) {
+                    rowBuilder.appendAttribute(STYLE, "background-color: #B9F3E4;");
+                } else if (availabilityDayDto.getAvailabilityStatus().contains("NOT AVAILABLE")) {
+                    rowBuilder.appendAttribute(STYLE, "background-color: #FF9B9B;");
+                } else if (availabilityDayDto.getAvailabilityStatus().contains("AVAILABLE")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #B9F3E4;");
                 } else if (availabilityDayDto.getAvailabilityStatus().contains("RAC")) {
                     rowBuilder.appendAttribute(STYLE, "background-color: #FFFEC4;");
