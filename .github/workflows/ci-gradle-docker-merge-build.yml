@@ -63,6 +63,7 @@ jobs:
       - name: Generate SSL keystore file
         shell: bash
         run: |
+          pwd
           echo -n "${{ env.SSL_KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.jks
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
