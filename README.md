@@ -3,5 +3,3 @@ docker stop utility-scheduler && docker rm utility-scheduler && docker pull shan
 
 # for decoding keystore file
 base64 -i keystore.jks
-
-# Rebuild
