@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "DropboxRefreshEvent",
+  "namespace": "com.shankarsan.utilityscheduler.dto.avro",
+  "fields": [{
+    "name": "intervalMillis",
+    "type": ["null", "int"],
+    "default": null
+  }, {
+    "name": "pin",
+    "type": ["null", "int"],
+    "default": null
+  }, {
+    "name": "pulseCount",
+    "type": ["null", "int"],
+    "default": null
+  }, {
+    "name": "pulseMillis",
+    "type": ["null", "int"],
+    "default": null
+  }]
+}

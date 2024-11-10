@@ -5,7 +5,7 @@ import com.shankarsan.utilityscheduler.dto.AvailabilityDayDto;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityRequestDto;
 import com.shankarsan.utilityscheduler.dto.SeatAvailabilityResponseDto;
-import com.shankarsan.utilityscheduler.service.comms.MailService;
+import com.shankarsan.utilityscheduler.comms.email.service.MailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

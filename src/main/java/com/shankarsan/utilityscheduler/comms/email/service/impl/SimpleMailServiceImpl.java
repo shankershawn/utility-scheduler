@@ -1,9 +1,9 @@
-package com.shankarsan.utilityscheduler.service.comms.impl;
+package com.shankarsan.utilityscheduler.comms.email.service.impl;
 
 import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.constants.CommonConstants;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
-import com.shankarsan.utilityscheduler.service.comms.MailService;
+import com.shankarsan.utilityscheduler.comms.email.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;

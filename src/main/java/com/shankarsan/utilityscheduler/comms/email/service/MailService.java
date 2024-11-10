@@ -1,4 +1,4 @@
-package com.shankarsan.utilityscheduler.service.comms;
+package com.shankarsan.utilityscheduler.comms.email.service;
 
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import org.springframework.lang.Nullable;

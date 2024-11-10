@@ -1,5 +1,6 @@
 package com.shankarsan.utilityscheduler.service.comms.impl;
 
+import com.shankarsan.utilityscheduler.comms.email.service.impl.SimpleMailServiceImpl;
 import com.shankarsan.utilityscheduler.configuration.ApplicationConfiguration;
 import com.shankarsan.utilityscheduler.dto.EmailDto;
 import org.junit.jupiter.api.BeforeAll;

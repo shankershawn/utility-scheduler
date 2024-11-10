@@ -31,7 +31,8 @@ jobs:
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
             secret/data/com-shankarsan docker-hub-token | DOCKER_HUB_TOKEN ;
             secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
-            secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
+            secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL ;
+            secret/data/utility-scheduler ssl-keystore-base64 | SSL_KEYSTORE_BASE64
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
       - name: Set up Docker Buildx
@@ -59,6 +60,10 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+      - name: Generate SSL keystore file
+        shell: bash
+        run: |
+          base64 -d ${{ env.SSL_KEYSTORE_BASE64 }} > src/main/resources/keystore.jks
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:

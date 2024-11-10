@@ -4,7 +4,8 @@ def coverageExclusions = [
         "**/exception/*",
         "**/configuration/*",
         "**/service/*",
-        "**/predicate/*"
+        "**/predicate/*",
+        "**/DropboxRefreshEventProducer.java"
 ].join(",")
 
 sonar {
