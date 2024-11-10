@@ -20,6 +20,8 @@ jobs:
   build:
     runs-on: raspberrypi
     steps:
+      - name: Install libatomic
+        run: apt-get update -y && apt-get install libatomic
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v3.0.0
         with:
