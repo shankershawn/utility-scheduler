@@ -12,7 +12,7 @@ group = 'com.shankarsan'
 version '1.0.' + System.getenv("RUN_NUMBER") + '_' + System.getenv("GITHUB_VERSION")
 
 java {
-	sourceCompatibility = '22'
+	sourceCompatibility = '17'
 }
 
 apply from: 'gradle/sonar.gradle'

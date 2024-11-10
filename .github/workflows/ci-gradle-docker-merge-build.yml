@@ -43,10 +43,10 @@ jobs:
           username: shankershawn
           password: ${{ env.DOCKER_HUB_TOKEN }}
       - uses: actions/checkout@v4.1.6
-      - name: Set up JDK 22
+      - name: Set up JDK 17
         uses: actions/setup-java@v4.2.1
         with:
-          java-version: '22'
+          java-version: '17'
           distribution: 'temurin'
       - name: Cache SonarQube packages
         uses: actions/cache@v4.0.2
