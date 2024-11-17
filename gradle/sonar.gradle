@@ -8,6 +8,8 @@ def coverageExclusions = [
         "**/DropboxRefreshEventProducer.java"
 ].join(",")
 
+tasks.sonar.dependsOn(build)
+
 sonar {
     properties {
         //sonar.host.url and sonar.token are obtained from vault
