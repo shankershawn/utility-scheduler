@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     steps:
       - name: Import Vault Secrets
         uses: hashicorp/vault-action@v3.0.0
@@ -55,7 +55,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
   generate-ssl-keystore-file:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     needs: setup
     steps:
       - name: Generate SSL keystore file
@@ -63,7 +63,7 @@ jobs:
           pwd
           echo -n "${{ env.SSL_KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.jks
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     needs:
       - setup
     steps:
@@ -83,7 +83,7 @@ jobs:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
   sonar-scan:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     needs:
       - build-and-test
     steps:
@@ -103,7 +103,7 @@ jobs:
         with:
           arguments: sonar --stacktrace
   publish-to-artifactory:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     needs:
       - sonar-scan
     steps:
@@ -123,7 +123,7 @@ jobs:
           arguments:
             publish
   docker-build:
-    runs-on: ubuntu-latest
+    runs-on: raspberrypi
     needs:
       - sonar-scan
     steps:
