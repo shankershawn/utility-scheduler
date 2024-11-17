@@ -23,7 +23,6 @@ jobs:
       - name: Install libatomic
         run: sudo apt-get update -y && sudo apt-get install libatomic1
       - name: Import Vault Secrets
-        id: vault
         uses: hashicorp/vault-action@v3.0.0
         with:
           url: http://144.24.128.195:8200
@@ -34,12 +33,6 @@ jobs:
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
             secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
             secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
-    outputs:
-      ARTIFACTORY_URL: $ {{ steps.vault.env.ARTIFACTORY_URL }}
-      ARTIFACTORY_USERNAME: $ {{ steps.vault.env.ARTIFACTORY_USERNAME }}
-      ARTIFACTORY_PASSWORD: $ {{ steps.vault.env.ARTIFACTORY_PASSWORD }}
-      SONAR_TOKEN: $ {{ steps.vault.env.SONAR_TOKEN }}
-      SONAR_HOST_URL: $ {{ steps.vault.env.SONAR_HOST_URL }}
   build-and-test:
     runs-on: raspberrypi
     needs:
@@ -58,11 +51,6 @@ jobs:
           arguments: clean build -x sonar --stacktrace
 #        run: ./gradlew clean build -x sonar
         env:
-          ARTIFACTORY_URL: $ {{ needs.setup.outputs.ARTIFACTORY_URL }}
-          ARTIFACTORY_USERNAME: $ {{ needs.setup.outputs.ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: $ {{ needs.setup.outputs.ARTIFACTORY_PASSWORD }}
-          SONAR_TOKEN: $ {{ needs.setup.outputs.SONAR_TOKEN }}
-          SONAR_HOST_URL: $ {{ needs.setup.outputs.SONAR_HOST_URL }}
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
   sonar-scan:
@@ -81,11 +69,6 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
 #        run: ./gradlew sonar
         env:
-          ARTIFACTORY_URL: $ {{ needs.setup.outputs.ARTIFACTORY_URL }}
-          ARTIFACTORY_USERNAME: $ {{ needs.setup.outputs.ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: $ {{ needs.setup.outputs.ARTIFACTORY_PASSWORD }}
-          SONAR_TOKEN: $ {{ needs.setup.outputs.SONAR_TOKEN }}
-          SONAR_HOST_URL: $ {{ needs.setup.outputs.SONAR_HOST_URL }}
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
         with:
