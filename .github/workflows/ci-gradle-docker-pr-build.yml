@@ -46,10 +46,10 @@ jobs:
       - name: Code checkout
         uses: actions/checkout@v4.1.6
       - name: Build with Gradle
-#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-#        with:
-#          arguments: clean build -x sonar
-        run: ./gradlew clean build -x sonar
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean build -x sonar
+#        run: ./gradlew clean build -x sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
@@ -66,8 +66,8 @@ jobs:
       - name: Code checkout
         uses: actions/checkout@v4.1.6
       - name: Sonarqube Scan
-#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        run: ./gradlew sonar
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        run: ./gradlew sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
