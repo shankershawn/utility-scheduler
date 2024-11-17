@@ -46,9 +46,10 @@ jobs:
       - setup
     steps:
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: clean build -x sonar
+        #uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        #with:
+          #arguments: clean build -x sonar
+        run: ./gradlew clean build -x sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
@@ -58,9 +59,25 @@ jobs:
       - build-and-test
     steps:
       - name: Sonarqube Scan
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        run: ./gradlew sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
+#        with:
+#          arguments: sonar --stacktrace
+  docker-build:
+    runs-on: raspberrypi
+    needs:
+      - sonar-scan
+    steps:
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6.5.0
         with:
-          arguments: sonar --stacktrace
+          context: .
+          platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
+          push: false
+          build-args: |
+            GITHUB_SHA=${{ github.sha }}
+            RUN_NUMBER=${{ github.run_number }}
+          tags: shankershawn/utility-scheduler:${{ github.sha }},shankershawn/utility-scheduler:latest
