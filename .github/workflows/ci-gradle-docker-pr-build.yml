@@ -33,6 +33,11 @@ jobs:
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
             secret/data/com-shankarsan sonar-token | SONAR_TOKEN ;
             secret/data/com-shankarsan sonar-host-url | SONAR_HOST_URL
+  build-and-test:
+    runs-on: raspberrypi
+    needs:
+      - setup
+    steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v4.2.1
         with:
@@ -40,16 +45,11 @@ jobs:
           distribution: 'temurin'
       - name: Code checkout
         uses: actions/checkout@v4.1.6
-  build-and-test:
-    runs-on: raspberrypi
-    needs:
-      - setup
-    steps:
       - name: Build with Gradle
-        #uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        #with:
-          #arguments: clean build -x sonar
-        run: ./gradlew clean build -x sonar
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean build -x sonar
+#        run: ./gradlew clean build -x sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
@@ -58,14 +58,21 @@ jobs:
     needs:
       - build-and-test
     steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Code checkout
+        uses: actions/checkout@v4.1.6
       - name: Sonarqube Scan
-#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        run: ./gradlew sonar
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        run: ./gradlew sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
-#        with:
-#          arguments: sonar --stacktrace
+        with:
+          arguments: sonar --stacktrace
   docker-build:
     runs-on: raspberrypi
     needs:
