@@ -71,8 +71,8 @@ jobs:
         env:
           GITHUB_VERSION: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
-#        with:
-#          arguments: sonar --stacktrace
+        with:
+          arguments: sonar --stacktrace
   docker-build:
     runs-on: raspberrypi
     needs:
