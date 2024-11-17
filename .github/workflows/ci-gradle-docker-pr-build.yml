@@ -48,7 +48,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: clean build -x sonar
+          arguments: clean build -x sonar --stacktrace
 #        run: ./gradlew clean build -x sonar
         env:
           GITHUB_VERSION: ${{ github.sha }}
