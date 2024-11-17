@@ -2,6 +2,7 @@ package com.shankarsan.utilityscheduler.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,6 +12,7 @@ import java.util.Optional;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class AvailabilityDayDto implements Serializable, Comparable<AvailabilityDayDto> {
 
     private static final long serialVersionUID = -3L;
@@ -46,6 +48,7 @@ public class AvailabilityDayDto implements Serializable, Comparable<Availability
     }
 
     public void setAvailabilityChange(AvailabilityDayDto o) {
+        log.debug("this = {}, o = {}", this, o);
         this.availabilityChange = compareTo(o);
     }
 

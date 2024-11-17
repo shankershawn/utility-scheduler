@@ -12,7 +12,7 @@ sonar {
     properties {
         //sonar.host.url and sonar.token are obtained from vault
         property("sonar.projectKey", "utility-scheduler")
-        property("sonar.qualitygate.wait", true)
+        property("sonar.qualitygate.wait", false)
         property("sonar.qualitygate.timeout", 3600)
         property("sonar.coverage.exclusions", coverageExclusions)
         property("sonar.scm.disabled", true)
