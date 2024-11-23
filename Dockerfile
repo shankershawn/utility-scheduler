@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-jammy AS build
+FROM eclipse-temurin:17-jdk AS build
 COPY . .
 ARG GITHUB_SHA
 ARG RUN_NUMBER
