@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.shankarsan'
-version '1.0.' + System.getenv("RUN_NUMBER") + '_' + System.getenv("GITHUB_VERSION")
+version '1.0.' + System.getenv("RUN_NUMBER")
 
 java {
 	sourceCompatibility = '17'
@@ -56,8 +56,8 @@ dependencies {
 	implementation 'com.shankarsan:dropbox-service:1.0.+'
 	implementation 'com.j2html:j2html:1.6.0'
 
-	compileOnly 'org.projectlombok:lombok:1.18.30'
-	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+	compileOnly 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.34'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.awaitility:awaitility:4.2.1'
