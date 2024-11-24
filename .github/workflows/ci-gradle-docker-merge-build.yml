@@ -22,14 +22,6 @@ jobs:
     steps:
       - name: Install libatomic
         run: sudo apt-get update -y && sudo apt-get install libatomic1
-  generate-ssl-keystore-file:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Generate SSL keystore file
-        run: |
-          pwd
-          echo -n "${{ env.SSL_KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.jks
   build-and-test:
     runs-on: ubuntu-latest
     needs:
@@ -103,6 +95,7 @@ jobs:
             secret/data/com-shankarsan artifactory-url | ARTIFACTORY_URL ;
             secret/data/com-shankarsan artifactory-username | ARTIFACTORY_USERNAME ;
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
+            secret/data/utility-scheduler ssl-keystore-base64 | SSL_KEYSTORE_BASE64 ;
       - name: Code checkout
         uses: actions/checkout@v4.1.6
       - name: Set up QEMU
@@ -126,6 +119,7 @@ jobs:
             ARTIFACTORY_URL=${{ env.ARTIFACTORY_URL }}
             ARTIFACTORY_USERNAME=${{ env.ARTIFACTORY_USERNAME }}
             ARTIFACTORY_PASSWORD=${{ env.ARTIFACTORY_PASSWORD }}
+            SSL_KEYSTORE_BASE64=${{ env.SSL_KEYSTORE_BASE64 }}
           tags: shankershawn/utility-scheduler:${{ github.sha }},shankershawn/utility-scheduler:latest
   publish-to-artifactory:
     runs-on: ubuntu-latest
