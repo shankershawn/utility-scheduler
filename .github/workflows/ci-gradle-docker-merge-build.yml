@@ -95,7 +95,7 @@ jobs:
             secret/data/com-shankarsan artifactory-url | ARTIFACTORY_URL ;
             secret/data/com-shankarsan artifactory-username | ARTIFACTORY_USERNAME ;
             secret/data/com-shankarsan artifactory-password | ARTIFACTORY_PASSWORD ;
-            secret/data/com-shankarsan ssl-keystore-base64 | SSL_KEYSTORE_BASE64 ;
+            secret/data/utility-scheduler ssl-keystore-base64 | SSL_KEYSTORE_BASE64 ;
       - name: Code checkout
         uses: actions/checkout@v4.1.6
       - name: Set up QEMU
