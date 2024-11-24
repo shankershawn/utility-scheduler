@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk AS build
+FROM --platform=linux/arm64 eclipse-temurin:17 AS build
 COPY . .
 ARG GITHUB_SHA
 ARG RUN_NUMBER
@@ -6,7 +6,7 @@ ENV GITHUB_VERSION=$GITHUB_SHA
 ENV RUN_NUMBER=$RUN_NUMBER
 RUN ./gradlew clean assemble
 
-FROM eclipse-temurin:17.0.11_9-jre AS app
+FROM eclipse-temurin:17-jre AS app
 ARG GITHUB_SHA
 ARG RUN_NUMBER
 ENV JAVA_OPTS="--add-opens=java.base/java.util.concurrent=ALL-UNNAMED"
