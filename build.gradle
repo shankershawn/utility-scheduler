@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.shankarsan'
-version '1.0.' + System.getenv("RUN_NUMBER") + '_' + System.getenv("GITHUB_VERSION")
+version '1.0.' + System.getenv("RUN_NUMBER")
 
 java {
 	sourceCompatibility = '17'
