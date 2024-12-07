@@ -196,6 +196,8 @@ public class SeatAvailabilityEmailProcessor implements Consumer<SeatAvailability
 
     private void processChangedData(List<AvailabilityDayDto> cachedAvailabilityData,
                                     List<AvailabilityDayDto> fetchedAvailabilityData) {
+        log.debug("cachedAvailabilityData: {}", cachedAvailabilityData);
+        log.debug("fetchedAvailabilityData: {}", fetchedAvailabilityData);
         Collector<AvailabilityDayDto, ?, Map<String, AvailabilityDayDto>> collector =
                 Collectors.toMap(AvailabilityDayDto::getAvailabilityDate, Function.identity());
         Consumer<AvailabilityDayDto> availabilityDayDtoConsumer = e -> e
